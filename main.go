@@ -8,6 +8,6 @@ import (
 
 func main() {
 	prog := chunk.Chunk{}
-	prog.Write([]uint8{1, 2, 3})
-	fmt.Println(prog.Code)
+	prog.Write([]uint8{chunk.OpReturn})
+	fmt.Println(prog.Disassemble("main"))
 }

@@ -10,8 +10,6 @@ func (c *Chunk) Write(code []uint8) (n int, err error) {
 	return len(code), nil
 }
 
-type OpCode uint8
-
 const (
-	OpReturn OpCode = iota
+	OpReturn uint8 = iota
 )
