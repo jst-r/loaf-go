@@ -1,11 +1,11 @@
-package loafgo
+package chunk
 
 type Chunk struct {
-	code []uint8
+	Code []uint8
 }
 
 func (c *Chunk) Write(code []uint8) (n int, err error) {
-	c.code = append(c.code, code...)
+	c.Code = append(c.Code, code...)
 
 	return len(code), nil
 }
