@@ -1,6 +1,10 @@
 package vm
 
-import "github.com/jst-r/loaf-go/chunk"
+import (
+	"fmt"
+
+	"github.com/jst-r/loaf-go/chunk"
+)
 
 type VM struct {
 	Chunk *chunk.Chunk
@@ -30,6 +34,9 @@ func (v *VM) run() InterpretResult {
 		switch v.readByte() {
 		case chunk.OpReturn:
 			return InterpretOk
+		case chunk.OpConstant:
+			val := v.readConstant()
+			fmt.Println("constant:", val)
 		}
 	}
 
@@ -40,4 +47,9 @@ func (v *VM) readByte() uint8 {
 	b := v.Chunk.Code[v.ip]
 	v.ip += 1
 	return b
+}
+
+func (v *VM) readConstant() chunk.Value {
+	index := int(v.readByte())
+	return v.Chunk.Constants[index]
 }
