@@ -41,10 +41,11 @@ func (v *VM) run() InterpretResult {
 		v.traceInstruction()
 		switch v.readByte() {
 		case chunk.OpReturn:
+			fmt.Println(v.pop().String())
 			return InterpretOk
 		case chunk.OpConstant:
-			val := v.readConstant()
-			fmt.Println("constant:", val)
+			constant := v.readConstant()
+			v.push(constant)
 		}
 	}
 
