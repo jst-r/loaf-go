@@ -8,7 +8,7 @@ import (
 
 func (v *VM) traceInstruction() {
 	fmt.Print("        ")
-	for i := v.ip - 1; i >= 0; i-- {
+	for i := v.stackTop - 1; i >= 0; i-- {
 		fmt.Printf("[ %s ]", v.stack[i].String())
 	}
 	dis := v.Chunk.NewDisassembler("main")
