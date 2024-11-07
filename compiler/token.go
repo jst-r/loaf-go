@@ -1,9 +1,9 @@
 package compiler
 
 type Token struct {
-	Type    TokenType
-	Literal string
-	Line    int
+	Type   TokenType
+	Lexeme string
+	Line   int
 }
 
 type TokenType int

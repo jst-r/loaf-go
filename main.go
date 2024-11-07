@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jst-r/loaf-go/bytecode"
+	"github.com/jst-r/loaf-go/compiler"
 	"github.com/jst-r/loaf-go/value"
 	"github.com/jst-r/loaf-go/vm"
 )
@@ -26,8 +27,17 @@ func main() {
 	}
 	prog.WriteSlice(bcode, make([]int, len(bcode)))
 
-	fmt.Println(prog.Disassemble("main"))
+	// fmt.Println(prog.Disassemble("main"))
 
 	res := vm.Interpret(&prog)
 	fmt.Println("Interpret result:", res)
+
+	scan := compiler.NewScanner("print \"Hello, World!\"\n" + "1 + 2 * 3.01 class\t\tprint")
+	for {
+		token := scan.Scan()
+		fmt.Printf("%+v\n", token)
+		if token.Type == compiler.TokenEof {
+			break
+		}
+	}
 }
