@@ -4,15 +4,22 @@ import (
 	"fmt"
 
 	"github.com/jst-r/loaf-go/chunk"
+	"github.com/jst-r/loaf-go/value"
 )
 
+type Value = value.Value
+
+const StackSize = 1024
+
 type VM struct {
-	Chunk *chunk.Chunk
-	ip    int
+	Chunk    *chunk.Chunk
+	ip       int
+	stack    [StackSize]Value
+	stackTop int
 }
 
 func New() *VM {
-	return &VM{nil, 0}
+	return &VM{Chunk: nil, ip: 0, stackTop: 0}
 }
 
 type InterpretResult int
@@ -31,7 +38,7 @@ func (v *VM) Interpret(chunk *chunk.Chunk) InterpretResult {
 
 func (v *VM) run() InterpretResult {
 	for {
-		traceInstruction(v.ip, v.Chunk)
+		v.traceInstruction()
 		switch v.readByte() {
 		case chunk.OpReturn:
 			return InterpretOk
@@ -50,7 +57,23 @@ func (v *VM) readByte() uint8 {
 	return b
 }
 
-func (v *VM) readConstant() chunk.Value {
+func (v *VM) readConstant() Value {
 	index := int(v.readByte())
 	return v.Chunk.Constants[index]
+}
+
+func (v *VM) push(value Value) {
+	if v.stackTop >= StackSize {
+		panic("stack overflow")
+	}
+	v.stack[v.stackTop] = value
+	v.stackTop += 1
+}
+
+func (v *VM) pop() Value {
+	if v.stackTop <= 0 {
+		panic("stack underflow")
+	}
+	v.stackTop -= 1
+	return v.stack[v.stackTop]
 }

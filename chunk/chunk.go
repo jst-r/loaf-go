@@ -3,12 +3,14 @@ package chunk
 import (
 	"fmt"
 	"log"
+
+	"github.com/jst-r/loaf-go/value"
 )
 
 type Chunk struct {
 	Code      []uint8
 	lines     LineInfo
-	Constants ValueArray
+	Constants value.ValueArray
 }
 
 func (c *Chunk) Write(code uint8, line int) error {
@@ -31,7 +33,7 @@ func (c *Chunk) WriteSlice(code []uint8, lines []int) error {
 	return nil
 }
 
-func (c *Chunk) AddConstant(value Value) (index int) {
+func (c *Chunk) AddConstant(value value.Value) (index int) {
 	c.Constants = append(c.Constants, value)
 	index = len(c.Constants) - 1
 	if index > 255 {

@@ -2,8 +2,6 @@
 
 package vm
 
-import "github.com/jst-r/loaf-go/chunk"
-
-func traceInstruction(ip int, chunk *chunk.Chunk) {
+func (v *VM) traceInstruction() {
 	// noop
 }

@@ -4,13 +4,15 @@ package vm
 
 import (
 	"fmt"
-
-	"github.com/jst-r/loaf-go/chunk"
 )
 
-func traceInstruction(ip int, chunk *chunk.Chunk) {
-	dis := chunk.NewDisassembler("main")
-	dis.SetOffset(ip)
+func (v *VM) traceInstruction() {
+	fmt.Print("        ")
+	for i := v.ip - 1; i >= 0; i-- {
+		fmt.Printf("[ %s ]", v.stack[i].String())
+	}
+	dis := v.Chunk.NewDisassembler("main")
+	dis.SetOffset(v.ip)
 	dis.DisassembleInstruction()
 	fmt.Print(dis.String())
 }
