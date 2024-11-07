@@ -27,6 +27,11 @@ func (d *disassembler) disassemble() string {
 
 	for d.offset < len(d.Code) {
 		d.builder.WriteString(fmt.Sprintf("%04d ", d.offset))
+		if d.offset > 0 && d.lines[d.offset-1] == d.lines[d.offset] {
+			d.builder.WriteString("   | ")
+		} else {
+			d.builder.WriteString(fmt.Sprintf("%4d ", d.lines[d.offset]))
+		}
 		d.disassembleInstruction()
 	}
 	return d.builder.String()
