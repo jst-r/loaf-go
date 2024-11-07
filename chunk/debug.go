@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Chunk) Disassemble(name string) string {
-	return c.newDisassembler(name).disassemble()
+	return c.NewDisassembler(name).disassemble()
 }
 
 type disassembler struct {
@@ -16,8 +16,16 @@ type disassembler struct {
 	builder *strings.Builder
 }
 
-func (c *Chunk) newDisassembler(name string) *disassembler {
+func (c *Chunk) NewDisassembler(name string) *disassembler {
 	return &disassembler{c, name, 0, &strings.Builder{}}
+}
+
+func (d *disassembler) SetOffset(offset int) {
+	d.offset = offset
+}
+
+func (d *disassembler) String() string {
+	return d.builder.String()
 }
 
 func (d *disassembler) disassemble() string {
@@ -32,12 +40,12 @@ func (d *disassembler) disassemble() string {
 		} else {
 			d.builder.WriteString(fmt.Sprintf("%4d ", d.lines.Find(d.offset)))
 		}
-		d.disassembleInstruction()
+		d.DisassembleInstruction()
 	}
 	return d.builder.String()
 }
 
-func (d *disassembler) disassembleInstruction() {
+func (d *disassembler) DisassembleInstruction() {
 	switch d.Code[d.offset] {
 	case OpReturn:
 		d.simpleInstruction("OP_RETURN")

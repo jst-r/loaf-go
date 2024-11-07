@@ -31,6 +31,7 @@ func (v *VM) Interpret(chunk *chunk.Chunk) InterpretResult {
 
 func (v *VM) run() InterpretResult {
 	for {
+		traceInstruction(v.ip, v.Chunk)
 		switch v.readByte() {
 		case chunk.OpReturn:
 			return InterpretOk
