@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/jst-r/loaf-go/chunk"
+	"github.com/jst-r/loaf-go/bytecode"
 	"github.com/jst-r/loaf-go/value"
 	"github.com/jst-r/loaf-go/vm"
 )
@@ -11,12 +11,12 @@ import (
 func main() {
 	vm := vm.New()
 
-	prog := chunk.Chunk{}
+	prog := bytecode.Chunk{}
 	ind := prog.AddConstant(value.Float(1.0))
 
-	prog.Write(chunk.OpConstant, 1)
+	prog.Write(bytecode.OpConstant, 1)
 	prog.Write(uint8(ind), 1)
-	prog.Write(chunk.OpReturn, 1)
+	prog.Write(bytecode.OpReturn, 1)
 	fmt.Println(prog.Disassemble("main"))
 
 	res := vm.Interpret(&prog)

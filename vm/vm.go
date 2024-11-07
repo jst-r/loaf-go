@@ -3,7 +3,7 @@ package vm
 import (
 	"fmt"
 
-	"github.com/jst-r/loaf-go/chunk"
+	"github.com/jst-r/loaf-go/bytecode"
 	"github.com/jst-r/loaf-go/value"
 )
 
@@ -12,7 +12,7 @@ type Value = value.Value
 const StackSize = 1024
 
 type VM struct {
-	Chunk    *chunk.Chunk
+	Chunk    *bytecode.Chunk
 	ip       int
 	stack    [StackSize]Value
 	stackTop int
@@ -30,7 +30,7 @@ const (
 	InterpretRuntimeError
 )
 
-func (v *VM) Interpret(chunk *chunk.Chunk) InterpretResult {
+func (v *VM) Interpret(chunk *bytecode.Chunk) InterpretResult {
 	v.Chunk = chunk
 
 	return v.run()
@@ -40,10 +40,10 @@ func (v *VM) run() InterpretResult {
 	for {
 		v.traceInstruction()
 		switch v.readByte() {
-		case chunk.OpReturn:
+		case bytecode.OpReturn:
 			fmt.Println(v.pop().String())
 			return InterpretOk
-		case chunk.OpConstant:
+		case bytecode.OpConstant:
 			constant := v.readConstant()
 			v.push(constant)
 		}
