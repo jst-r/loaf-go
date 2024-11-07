@@ -1,6 +1,9 @@
 package chunk
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type Chunk struct {
 	Code      []uint8
@@ -28,7 +31,11 @@ func (c *Chunk) WriteSlice(code []uint8, lines []int) error {
 
 func (c *Chunk) AddConstant(value Value) (index int) {
 	c.Constants = append(c.Constants, value)
-	return len(c.Constants) - 1
+	index = len(c.Constants) - 1
+	if index > 255 {
+		log.Fatal("too many constants")
+	}
+	return index
 }
 
 const (
