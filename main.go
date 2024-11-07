@@ -16,7 +16,8 @@ func main() {
 
 	prog.Write(bytecode.OpConstant, 1)
 	prog.Write(uint8(ind), 1)
-	prog.Write(bytecode.OpReturn, 1)
+	prog.Write(bytecode.OpNegate, 1)
+	prog.Write(bytecode.OpReturn, 2)
 	fmt.Println(prog.Disassemble("main"))
 
 	res := vm.Interpret(&prog)

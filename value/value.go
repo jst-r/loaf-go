@@ -12,6 +12,10 @@ func Float(val float64) Value {
 	return Value{val}
 }
 
+func (v Value) AsFloat() float64 {
+	return v.val
+}
+
 func (v Value) String() string {
 	return fmt.Sprintf("%f", v.val)
 }

@@ -44,6 +44,7 @@ func (c *Chunk) AddConstant(value value.Value) (index int) {
 
 const (
 	OpConstant uint8 = iota
+	OpNegate
 	OpReturn
 )
 

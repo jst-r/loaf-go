@@ -46,10 +46,10 @@ func (v *VM) run() InterpretResult {
 		case bytecode.OpConstant:
 			constant := v.readConstant()
 			v.push(constant)
+		case bytecode.OpNegate:
+			v.push(value.Float(-v.pop().AsFloat()))
 		}
 	}
-
-	return InterpretRuntimeError
 }
 
 func (v *VM) readByte() uint8 {
