@@ -12,12 +12,20 @@ func main() {
 	vm := vm.New()
 
 	prog := bytecode.Chunk{}
-	ind := prog.AddConstant(value.Float(1.0))
+	ind1 := prog.AddConstant(value.Float(1.0))
+	ind2 := prog.AddConstant(value.Float(2.0))
 
-	prog.Write(bytecode.OpConstant, 1)
-	prog.Write(uint8(ind), 1)
-	prog.Write(bytecode.OpNegate, 1)
-	prog.Write(bytecode.OpReturn, 2)
+	bcode := []uint8{
+		bytecode.OpConstant,
+		uint8(ind1),
+		bytecode.OpConstant,
+		uint8(ind2),
+		bytecode.OpAdd,
+		bytecode.OpNegate,
+		bytecode.OpReturn,
+	}
+	prog.WriteSlice(bcode, make([]int, len(bcode)))
+
 	fmt.Println(prog.Disassemble("main"))
 
 	res := vm.Interpret(&prog)

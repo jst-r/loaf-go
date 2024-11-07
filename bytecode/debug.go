@@ -53,11 +53,18 @@ func (d *disassembler) DisassembleInstruction() {
 		d.constantInstruction("OP_CONSTANT")
 	case OpNegate:
 		d.simpleInstruction("OP_NEGATE")
+	case OpAdd:
+		d.simpleInstruction("OP_ADD")
+	case OpSubtract:
+		d.simpleInstruction("OP_SUBTRACT")
+	case OpMultiply:
+		d.simpleInstruction("OP_MULTIPLY")
+	case OpDivide:
+		d.simpleInstruction("OP_DIVIDE")
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
 	}
-
 }
 
 func (d *disassembler) simpleInstruction(name string) {

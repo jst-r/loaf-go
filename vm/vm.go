@@ -46,6 +46,14 @@ func (v *VM) run() InterpretResult {
 		case bytecode.OpConstant:
 			constant := v.readConstant()
 			v.push(constant)
+		case bytecode.OpAdd:
+			v.binaryOp(add)
+		case bytecode.OpSubtract:
+			v.binaryOp(subtract)
+		case bytecode.OpMultiply:
+			v.binaryOp(multiply)
+		case bytecode.OpDivide:
+			v.binaryOp(divide)
 		case bytecode.OpNegate:
 			v.push(value.Float(-v.pop().AsFloat()))
 		}
@@ -77,4 +85,10 @@ func (v *VM) pop() Value {
 	}
 	v.stackTop -= 1
 	return v.stack[v.stackTop]
+}
+
+func (v *VM) binaryOp(op func(a, b Value) Value) {
+	b := v.pop()
+	a := v.pop()
+	v.push(op(a, b))
 }

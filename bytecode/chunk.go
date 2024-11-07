@@ -42,12 +42,6 @@ func (c *Chunk) AddConstant(value value.Value) (index int) {
 	return index
 }
 
-const (
-	OpConstant uint8 = iota
-	OpNegate
-	OpReturn
-)
-
 // Assumes that the line numbers are monotonically increasing
 type LineInfo struct {
 	spans []LineSpan
