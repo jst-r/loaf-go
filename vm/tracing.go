@@ -11,6 +11,7 @@ func (v *VM) traceInstruction() {
 	for i := v.stackTop - 1; i >= 0; i-- {
 		fmt.Printf("[ %s ]", v.stack[i].String())
 	}
+	fmt.Println()
 	dis := v.Chunk.NewDisassembler("main")
 	dis.SetOffset(v.ip)
 	dis.DisassembleInstruction()

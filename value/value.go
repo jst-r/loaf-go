@@ -13,5 +13,5 @@ func Float(val float64) Value {
 }
 
 func (v Value) String() string {
-	return fmt.Sprintf("%f", v)
+	return fmt.Sprintf("%f", v.val)
 }

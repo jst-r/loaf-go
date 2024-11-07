@@ -66,7 +66,7 @@ func (d *disassembler) simpleInstruction(name string) {
 
 func (d *disassembler) constantInstruction(name string) {
 	index := int(d.Code[d.offset+1])
-	value := d.Constants[index]
-	d.builder.WriteString(fmt.Sprintf("%-16s %4d %f\n", name, index, value))
+	value := d.Constants[index].String()
+	d.builder.WriteString(fmt.Sprintf("%-16s %4d %s\n", name, index, value))
 	d.offset += 2
 }
