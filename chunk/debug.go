@@ -6,41 +6,54 @@ import (
 )
 
 func (c *Chunk) Disassemble(name string) string {
-	builder := strings.Builder{}
-
-	builder.WriteString("=== ")
-	builder.WriteString(name)
-	builder.WriteString(" ===\n")
-
-	for offset := 0; offset < len(c.Code); {
-		builder.WriteString(fmt.Sprintf("%04d ", offset))
-		offset = c.disassembleInstruction(offset, &builder)
-	}
-	return builder.String()
+	return c.newDisassembler(name).disassemble()
 }
 
-func (c *Chunk) disassembleInstruction(offset int, builder *strings.Builder) (newOffset int) {
-	switch c.Code[offset] {
+type disassembler struct {
+	*Chunk
+	name    string
+	offset  int
+	builder *strings.Builder
+}
+
+func (c *Chunk) newDisassembler(name string) *disassembler {
+	return &disassembler{c, name, 0, &strings.Builder{}}
+}
+
+func (d *disassembler) disassemble() string {
+	d.builder.WriteString("=== ")
+	d.builder.WriteString(d.name)
+	d.builder.WriteString(" ===\n")
+
+	for d.offset < len(d.Code) {
+		d.builder.WriteString(fmt.Sprintf("%04d ", d.offset))
+		d.disassembleInstruction()
+	}
+	return d.builder.String()
+}
+
+func (d *disassembler) disassembleInstruction() {
+	switch d.Code[d.offset] {
 	case OpReturn:
-		return simpleInstruction("OP_RETURN", offset, builder)
+		d.simpleInstruction("OP_RETURN")
 	case OpConstant:
-		return constantInstruction("OP_CONSTANT", offset, builder, c)
+		d.constantInstruction("OP_CONSTANT")
 	default:
-		builder.WriteString(fmt.Sprintf("unknown instruction %d\n", c.Code[offset]))
-		return offset + 1
+		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
+		d.offset += 1
 	}
 
 }
 
-func simpleInstruction(name string, offset int, builder *strings.Builder) int {
-	builder.WriteString(name)
-	builder.WriteString("\n")
-	return offset + 1
+func (d *disassembler) simpleInstruction(name string) {
+	d.builder.WriteString(name)
+	d.builder.WriteString("\n")
+	d.offset += 1
 }
 
-func constantInstruction(name string, offset int, builder *strings.Builder, c *Chunk) int {
-	index := int(c.Code[offset+1])
-	value := c.Constants[index]
-	builder.WriteString(fmt.Sprintf("%-16s %4d %f\n", name, index, value))
-	return offset + 2
+func (d *disassembler) constantInstruction(name string) {
+	index := int(d.Code[d.offset+1])
+	value := d.Constants[index]
+	d.builder.WriteString(fmt.Sprintf("%-16s %4d %f\n", name, index, value))
+	d.offset += 2
 }
