@@ -32,9 +32,9 @@ func main() {
 	res := vm.Interpret(&prog)
 	fmt.Println("Interpret result:", res)
 
-	scan := compiler.NewScanner("print \"Hello, World!\"\n" + "1 + 2 * 3.01 class\t\tprint")
+	scanner := compiler.NewScanner("print \"Hello, World!\"\n" + "1 + 2 * 3.01 class\t\tprint")
 	for {
-		token := scan.Scan()
+		token := scanner.Scan()
 		fmt.Printf("%+v\n", token)
 		if token.Type == compiler.TokenEof {
 			break
