@@ -2,10 +2,8 @@ package compiler
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/jst-r/loaf-go/bytecode"
-	"github.com/jst-r/loaf-go/value"
 )
 
 func Compile(source string) (chunk *bytecode.Chunk, errors []string) {
@@ -24,91 +22,19 @@ type Parser struct {
 	previous       Token
 	errors         []string
 	panicMode      bool
+	rules          []ParseRule
 }
 
 func NewParser(input string) *Parser {
-	return &Parser{
+	p := &Parser{
 		compilingChunk: &bytecode.Chunk{},
 		scanner:        NewScanner(input),
 		current:        Token{}, previous: Token{},
 		errors: nil, panicMode: false}
-}
 
-func (p *Parser) expression() {
-	p.parsePrecedence(PrecedenceAssignment)
-}
+	p.initRules()
 
-type Precedence int
-
-const (
-	PrecedenceNone Precedence = iota
-	PrecedenceAssignment
-	PrecedenceOr
-	PrecedenceAnd
-	PrecedenceComparison
-	PrecedenceTerm
-	PrecedenceFactor
-	PrecedenceUnary
-	PrecedenceCall
-	PrecedencePrimary
-)
-
-type ParseRule struct {
-	precedence Precedence
-}
-
-func (p *Parser) getRule(tokenType TokenType) ParseRule {
-	return ParseRule{PrecedenceNone}
-}
-
-func (p *Parser) parsePrecedence(precedence Precedence) {}
-
-func (p *Parser) number() {
-	v, err := strconv.ParseFloat(p.previous.Lexeme, 64)
-	if err != nil {
-		p.error(err.Error())
-		return
-	}
-	p.emitConstant(value.Float(v))
-}
-
-func (p *Parser) grouping() {
-	p.expression()
-	p.consume(TokenRightParen, "Expected ) after expression")
-}
-
-func (p *Parser) unary() {
-	operatorType := p.previous.Type
-
-	p.parsePrecedence(PrecedenceUnary) // compile operand first because of how the stack works
-
-	switch operatorType {
-	case TokenMinus:
-		p.emitByte(bytecode.OpNegate)
-	default:
-		panic("unreachable case in unary")
-	}
-}
-
-func (p *Parser) binary() {
-	operatorType := p.previous.Type
-
-	rule := p.getRule(operatorType)
-	p.parsePrecedence(rule.precedence)
-
-	switch operatorType {
-	case TokenPlus:
-		p.emitByte(bytecode.OpAdd)
-	case TokenMinus:
-		p.emitByte(bytecode.OpSubtract)
-	case TokenStar:
-		p.emitByte(bytecode.OpMultiply)
-	case TokenSlash:
-		p.emitByte(bytecode.OpDivide)
-	default:
-		panic("unreachable case in binary")
-	}
-
+	return p
 }
 
 func (p *Parser) endCompiler() {

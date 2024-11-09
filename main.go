@@ -32,7 +32,7 @@ func main() {
 	res := vm.Interpret(&prog)
 	fmt.Println("Interpret result:", res)
 
-	scanner := compiler.NewScanner("print \"Hello, World!\"\n" + "1 + 2 * 3.01 class\t\tprint")
+	scanner := compiler.NewScanner("(-1 + 2) * 3 - -4")
 	for {
 		token := scanner.Scan()
 		fmt.Printf("%+v\n", token)
@@ -40,4 +40,11 @@ func main() {
 			break
 		}
 	}
+
+	p, errs := compiler.Compile("(-1 + 2) * 3 - -4")
+	if len(errs) > 0 {
+		fmt.Println(errs)
+		return
+	}
+	fmt.Println(p.Disassemble("main"))
 }
