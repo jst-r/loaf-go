@@ -41,7 +41,7 @@ func (v *VM) run() InterpretResult {
 		v.traceInstruction()
 		switch v.readByte() {
 		case bytecode.OpReturn:
-			fmt.Println(v.pop().String())
+			fmt.Println(v.pop().FormatString())
 			return InterpretOk
 		case bytecode.OpConstant:
 			constant := v.readConstant()
