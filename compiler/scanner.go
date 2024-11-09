@@ -181,10 +181,10 @@ func (s *Scanner) peekNext() byte {
 }
 
 func (s *Scanner) advance() byte {
-	s.current++
 	if s.isAtEnd() {
 		return 0
 	}
+	s.current++
 	return s.input[s.current-1]
 }
 
