@@ -39,6 +39,10 @@ func (p *Parser) initRules() {
 	p.rules[TokenStar] = ParseRule{infix: p.binary, precedence: PrecedenceFactor}
 	p.rules[TokenSlash] = ParseRule{infix: p.binary, precedence: PrecedenceFactor}
 	p.rules[TokenNumber] = ParseRule{prefix: p.number, precedence: PrecedenceNone}
+
+	p.rules[TokenNil] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
+	p.rules[TokenTrue] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
+	p.rules[TokenFalse] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 }
 
 func (p *Parser) expression() {
@@ -116,4 +120,17 @@ func (p *Parser) binary() {
 		panic("unreachable case in binary")
 	}
 
+}
+
+func (p *Parser) literal() {
+	switch p.previous.Type {
+	case TokenNil:
+		p.emitByte(bytecode.OpNil)
+	case TokenTrue:
+		p.emitByte(bytecode.OpTrue)
+	case TokenFalse:
+		p.emitByte(bytecode.OpFalse)
+	default:
+		panic("unreachable case in literal")
+	}
 }

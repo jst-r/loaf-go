@@ -58,6 +58,12 @@ func (v *VM) run() InterpretResult {
 			hadError = v.binaryOp(divide)
 		case bytecode.OpNegate:
 			hadError = v.negate()
+		case bytecode.OpNil:
+			v.push(value.Nil)
+		case bytecode.OpTrue:
+			v.push(value.Bool(true))
+		case bytecode.OpFalse:
+			v.push(value.Bool(false))
 		}
 
 		if hadError {
