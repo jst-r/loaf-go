@@ -2,6 +2,7 @@ package vm
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jst-r/loaf-go/bytecode"
 	"github.com/jst-r/loaf-go/value"
@@ -55,9 +56,20 @@ func (v *VM) run() InterpretResult {
 		case bytecode.OpDivide:
 			v.binaryOp(divide)
 		case bytecode.OpNegate:
+			if !v.peek(0).IsFloat() {
+				v.runtimeError("Operand must be a number")
+				return InterpretRuntimeError
+			}
 			v.push(value.Float(-v.pop().AsFloat()))
 		}
 	}
+}
+
+func (v *VM) runtimeError(format string, args ...interface{}) {
+	os.Stderr.WriteString(fmt.Sprintf(format, args...) + "\n")
+	instruction := v.ip - 1
+	line := v.Chunk.Lines.Find(instruction)
+	os.Stderr.WriteString(fmt.Sprintf("line %d in script\n", line))
 }
 
 func (v *VM) readByte() uint8 {
@@ -85,6 +97,13 @@ func (v *VM) pop() Value {
 	}
 	v.stackTop -= 1
 	return v.stack[v.stackTop]
+}
+
+func (v *VM) peek(distance int) Value {
+	if v.stackTop-distance-1 < 0 {
+		panic("stack underflow")
+	}
+	return v.stack[v.stackTop-distance-1]
 }
 
 func (v *VM) binaryOp(op func(a, b Value) Value) {

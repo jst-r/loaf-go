@@ -9,13 +9,13 @@ import (
 
 type Chunk struct {
 	Code      []uint8
-	lines     LineInfo
+	Lines     LineInfo
 	Constants value.ValueArray
 }
 
 func (c *Chunk) Write(code uint8, line int) error {
 	c.Code = append(c.Code, code)
-	c.lines.AddLine(len(c.Code)-1, line)
+	c.Lines.AddLine(len(c.Code)-1, line)
 
 	return nil
 }
@@ -26,7 +26,7 @@ func (c *Chunk) WriteSlice(code []uint8, lines []int) error {
 	}
 
 	for i, line := range lines { // doesn't look too got but it's linear
-		c.lines.AddLine(len(c.Code)+i-1, line)
+		c.Lines.AddLine(len(c.Code)+i-1, line)
 	}
 	c.Code = append(c.Code, code...)
 
