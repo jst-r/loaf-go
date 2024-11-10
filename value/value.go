@@ -43,6 +43,10 @@ func (v Value) AsBool() bool {
 	return v.mem != 0
 }
 
+func (v Value) IsFalsey() bool {
+	return v.IsNil() || (v.IsBool() && !v.AsBool())
+}
+
 func (v Value) FormatString() string {
 	switch v.t {
 	case ValueTypeNil:

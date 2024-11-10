@@ -51,6 +51,8 @@ func (d *disassembler) DisassembleInstruction() {
 		d.simpleInstruction("OP_RETURN")
 	case OpConstant:
 		d.constantInstruction("OP_CONSTANT")
+	case OpNot:
+		d.simpleInstruction("OP_NOT")
 	case OpNegate:
 		d.simpleInstruction("OP_NEGATE")
 	case OpAdd:

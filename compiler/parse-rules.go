@@ -43,6 +43,8 @@ func (p *Parser) initRules() {
 	p.rules[TokenNil] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 	p.rules[TokenTrue] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 	p.rules[TokenFalse] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
+
+	p.rules[TokenBang] = ParseRule{prefix: p.unary, precedence: PrecedenceNone}
 }
 
 func (p *Parser) expression() {
@@ -94,6 +96,8 @@ func (p *Parser) unary() {
 	p.parsePrecedence(PrecedenceUnary) // compile operand first because of how the stack works
 
 	switch operatorType {
+	case TokenBang:
+		p.emitByte(bytecode.OpNot)
 	case TokenMinus:
 		p.emitByte(bytecode.OpNegate)
 	default:

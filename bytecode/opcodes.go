@@ -5,6 +5,7 @@ const (
 	OpNil
 	OpTrue
 	OpFalse
+	OpNot
 	OpNegate
 	OpAdd
 	OpSubtract
