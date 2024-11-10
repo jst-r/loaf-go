@@ -105,9 +105,3 @@ func (v *VM) peek(distance int) Value {
 	}
 	return v.stack[v.stackTop-distance-1]
 }
-
-func (v *VM) binaryOp(op func(a, b Value) Value) {
-	b := v.pop()
-	a := v.pop()
-	v.push(op(a, b))
-}
