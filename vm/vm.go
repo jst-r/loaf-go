@@ -40,6 +40,7 @@ func (v *VM) Interpret(chunk *bytecode.Chunk) InterpretResult {
 func (v *VM) run() InterpretResult {
 	for {
 		v.traceInstruction()
+		hadError := false
 		switch v.readByte() {
 		case bytecode.OpReturn:
 			fmt.Println(v.pop().FormatString())
@@ -48,19 +49,19 @@ func (v *VM) run() InterpretResult {
 			constant := v.readConstant()
 			v.push(constant)
 		case bytecode.OpAdd:
-			v.binaryOp(add)
+			hadError = v.binaryOp(add)
 		case bytecode.OpSubtract:
-			v.binaryOp(subtract)
+			hadError = v.binaryOp(subtract)
 		case bytecode.OpMultiply:
-			v.binaryOp(multiply)
+			hadError = v.binaryOp(multiply)
 		case bytecode.OpDivide:
-			v.binaryOp(divide)
+			hadError = v.binaryOp(divide)
 		case bytecode.OpNegate:
-			if !v.peek(0).IsFloat() {
-				v.runtimeError("Operand must be a number")
-				return InterpretRuntimeError
-			}
-			v.push(value.Float(-v.pop().AsFloat()))
+			hadError = v.negate()
+		}
+
+		if hadError {
+			return InterpretRuntimeError
 		}
 	}
 }
