@@ -1,6 +1,7 @@
 package vm
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -17,6 +18,7 @@ type VM struct {
 	ip       int
 	stack    [StackSize]Value
 	stackTop int
+	err      error
 }
 
 func New() *VM {
@@ -34,30 +36,43 @@ const (
 func (v *VM) Interpret(chunk *bytecode.Chunk) InterpretResult {
 	v.Chunk = chunk
 
-	return v.run()
+	v.run()
+
+	if v.err != nil {
+		os.Stderr.WriteString(v.err.Error())
+		return InterpretRuntimeError
+	}
+
+	return InterpretOk
 }
 
-func (v *VM) run() InterpretResult {
+func (v *VM) run() {
+	defer func() {
+		if r := recover(); r != nil {
+			v.runtimeError(r.(string))
+		}
+	}()
+
 	for {
 		v.traceInstruction()
-		hadError := false
+
 		switch v.readByte() {
 		case bytecode.OpReturn:
 			fmt.Println(v.pop().FormatString())
-			return InterpretOk
+			return
 		case bytecode.OpConstant:
 			constant := v.readConstant()
 			v.push(constant)
 		case bytecode.OpAdd:
-			hadError = v.binaryOp(add)
+			v.binaryOp(add)
 		case bytecode.OpSubtract:
-			hadError = v.binaryOp(subtract)
+			v.binaryOp(subtract)
 		case bytecode.OpMultiply:
-			hadError = v.binaryOp(multiply)
+			v.binaryOp(multiply)
 		case bytecode.OpDivide:
-			hadError = v.binaryOp(divide)
+			v.binaryOp(divide)
 		case bytecode.OpNegate:
-			hadError = v.negate()
+			v.negate()
 		case bytecode.OpNil:
 			v.push(value.Nil)
 		case bytecode.OpTrue:
@@ -71,22 +86,18 @@ func (v *VM) run() InterpretResult {
 			a := v.pop()
 			v.push(value.Bool(value.ValuesEqual(a, b)))
 		case bytecode.OpGreater:
-			hadError = v.binaryOp(greater)
+			v.binaryOp(greater)
 		case bytecode.OpLess:
-			hadError = v.binaryOp(less)
-		}
-
-		if hadError {
-			return InterpretRuntimeError
+			v.binaryOp(less)
 		}
 	}
 }
 
-func (v *VM) runtimeError(format string, args ...interface{}) {
-	os.Stderr.WriteString(fmt.Sprintf(format, args...) + "\n")
+func (v *VM) runtimeError(msg string) {
 	instruction := v.ip - 1
 	line := v.Chunk.Lines.Find(instruction)
-	os.Stderr.WriteString(fmt.Sprintf("line %d in script\n", line))
+	errString := msg + "\n" + fmt.Sprintf("line %d in script\n", line)
+	v.err = errors.New(errString)
 }
 
 func (v *VM) readByte() uint8 {
