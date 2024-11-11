@@ -31,6 +31,15 @@ func (v Value) IsObjectType(t ObjType) bool {
 	return v.IsObject() && v.AsObject().t == t
 }
 
+func (v Value) IsString() bool {
+	return v.IsObjectType(ObjTypeString)
+}
+
+// Unsafe, caller must verify the type before calling this method
+func (v Value) ObjectType() ObjType {
+	return v.AsObject().t
+}
+
 // Unsafe, caller must verify the type before calling this method
 func (v Value) AsObject() *Obj {
 	return unsafeBitCast[uint64, *Obj](v.mem)

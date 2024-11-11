@@ -64,7 +64,7 @@ func (v *VM) run() {
 			constant := v.readConstant()
 			v.push(constant)
 		case bytecode.OpAdd:
-			v.binaryOp(add)
+			v.add()
 		case bytecode.OpSubtract:
 			v.binaryOp(subtract)
 		case bytecode.OpMultiply:

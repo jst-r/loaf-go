@@ -18,8 +18,18 @@ func (v *VM) negate() {
 	v.push(value.Float(-v.pop().AsFloat()))
 }
 
-func add(a, b Value) Value {
-	return value.Float(a.AsFloat() + b.AsFloat())
+func (v *VM) add() Value {
+	if v.peek(0).IsFloat() || v.peek(1).IsFloat() {
+		b := v.pop()
+		a := v.pop()
+		return value.Float(a.AsFloat() + b.AsFloat())
+	}
+	if v.peek(0).IsString() || v.peek(1).IsString() {
+		b := v.pop()
+		a := v.pop()
+		return value.String(a.AsString().Str + b.AsString().Str)
+	}
+	panic("Type error: operands must be numbers or strings")
 }
 
 func subtract(a, b Value) Value {

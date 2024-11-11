@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/jst-r/loaf-go/bytecode"
 	"github.com/jst-r/loaf-go/value"
@@ -39,11 +40,12 @@ func (p *Parser) initRules() {
 	p.rules[TokenPlus] = ParseRule{infix: p.binary, precedence: PrecedenceTerm}
 	p.rules[TokenStar] = ParseRule{infix: p.binary, precedence: PrecedenceFactor}
 	p.rules[TokenSlash] = ParseRule{infix: p.binary, precedence: PrecedenceFactor}
-	p.rules[TokenNumber] = ParseRule{prefix: p.number, precedence: PrecedenceNone}
 
 	p.rules[TokenNil] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 	p.rules[TokenTrue] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 	p.rules[TokenFalse] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
+	p.rules[TokenNumber] = ParseRule{prefix: p.number, precedence: PrecedenceNone}
+	p.rules[TokenString] = ParseRule{prefix: p.string, precedence: PrecedenceNone}
 
 	p.rules[TokenBang] = ParseRule{prefix: p.unary, precedence: PrecedenceNone}
 	p.rules[TokenEqualEqual] = ParseRule{infix: p.binary, precedence: PrecedenceEquality}
@@ -90,6 +92,12 @@ func (p *Parser) number() {
 		return
 	}
 	p.emitConstant(value.Float(v))
+}
+
+func (p *Parser) string() {
+	// Without the clone this will point to the source file, which is a hassle to deal with
+	v := strings.Clone(p.previous.Lexeme[1 : len(p.previous.Lexeme)-1])
+	p.emitConstant(value.String(v))
 }
 
 func (p *Parser) grouping() {

@@ -49,7 +49,19 @@ func (v Value) IsFalsey() bool {
 }
 
 func ValuesEqual(a, b Value) bool {
-	return a.t == b.t && a.mem == b.mem
+	if a.t != b.t {
+		return false
+	}
+	if !a.IsObject() {
+		return a.mem == b.mem // Since go initializes all memory to zero this works for smaller types (e.g. bool)
+	}
+
+	switch a.ObjectType() {
+	case ObjTypeString:
+		return a.AsString().Str == b.AsString().Str
+	default:
+		return false
+	}
 }
 
 func (v Value) FormatString() string {
@@ -64,6 +76,13 @@ func (v Value) FormatString() string {
 		}
 	case ValueTypeFloat:
 		return fmt.Sprintf("%f", v.AsFloat())
+	case ValueTypeObject:
+		switch v.ObjectType() {
+		case ObjTypeString:
+			return fmt.Sprintf("\"%s\"", v.AsString().Str)
+		default:
+			panic("unreachable")
+		}
 	default:
 		panic("unreachable")
 	}
