@@ -11,6 +11,7 @@ const (
 	ValueTypeNil ValueType = iota
 	ValueTypeBool
 	ValueTypeFloat
+	ValueTypeObject
 )
 
 type Value struct {

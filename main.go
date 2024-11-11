@@ -10,7 +10,7 @@ import (
 func main() {
 	vm := vm.New()
 
-	prog, errs := compiler.Compile("!((1 + 2) * 3 >= 0)")
+	prog, errs := compiler.Compile("!((1 + 2) * 3 >= 0) + 1")
 	if len(errs) > 0 {
 		fmt.Println("Compile errors:", errs)
 		return
