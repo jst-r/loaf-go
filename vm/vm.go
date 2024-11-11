@@ -66,6 +66,14 @@ func (v *VM) run() InterpretResult {
 			v.push(value.Bool(false))
 		case bytecode.OpNot:
 			v.push(value.Bool(v.pop().IsFalsey()))
+		case bytecode.OpEqual:
+			b := v.pop()
+			a := v.pop()
+			v.push(value.Bool(value.ValuesEqual(a, b)))
+		case bytecode.OpGreater:
+			hadError = v.binaryOp(greater)
+		case bytecode.OpLess:
+			hadError = v.binaryOp(less)
 		}
 
 		if hadError {

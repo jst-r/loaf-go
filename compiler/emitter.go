@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Parser) emitConstant(v value.Value) {
-	p.emityBytes(bytecode.OpConstant, p.makeConstant(v))
+	p.emitBytes(bytecode.OpConstant, p.makeConstant(v))
 }
 
 func (p *Parser) makeConstant(v value.Value) uint8 {
@@ -22,7 +22,7 @@ func (p *Parser) emitByte(b uint8) {
 	p.currentChunk().Write(b, p.previous.Line)
 }
 
-func (p *Parser) emityBytes(bs ...uint8) {
+func (p *Parser) emitBytes(bs ...uint8) {
 	for _, b := range bs {
 		p.emitByte(b)
 	}

@@ -11,5 +11,8 @@ const (
 	OpSubtract
 	OpMultiply
 	OpDivide
+	OpEqual
+	OpGreater
+	OpLess
 	OpReturn
 )

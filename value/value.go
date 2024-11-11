@@ -47,6 +47,10 @@ func (v Value) IsFalsey() bool {
 	return v.IsNil() || (v.IsBool() && !v.AsBool())
 }
 
+func ValuesEqual(a, b Value) bool {
+	return a.t == b.t && a.mem == b.mem
+}
+
 func (v Value) FormatString() string {
 	switch v.t {
 	case ValueTypeNil:

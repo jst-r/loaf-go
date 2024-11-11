@@ -38,3 +38,11 @@ func multiply(a, b Value) Value {
 func divide(a, b Value) Value {
 	return value.Float(a.AsFloat() / b.AsFloat())
 }
+
+func greater(a, b Value) Value {
+	return value.Bool(a.AsFloat() > b.AsFloat())
+}
+
+func less(a, b Value) Value {
+	return value.Bool(a.AsFloat() < b.AsFloat())
+}

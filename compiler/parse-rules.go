@@ -14,6 +14,7 @@ const (
 	PrecedenceAssignment
 	PrecedenceOr
 	PrecedenceAnd
+	PrecedenceEquality
 	PrecedenceComparison
 	PrecedenceTerm
 	PrecedenceFactor
@@ -45,6 +46,12 @@ func (p *Parser) initRules() {
 	p.rules[TokenFalse] = ParseRule{prefix: p.literal, precedence: PrecedenceNone}
 
 	p.rules[TokenBang] = ParseRule{prefix: p.unary, precedence: PrecedenceNone}
+	p.rules[TokenEqualEqual] = ParseRule{infix: p.binary, precedence: PrecedenceEquality}
+	p.rules[TokenBangEqual] = ParseRule{infix: p.binary, precedence: PrecedenceEquality}
+	p.rules[TokenLess] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
+	p.rules[TokenLessEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
+	p.rules[TokenGreater] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
+	p.rules[TokenGreaterEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
 }
 
 func (p *Parser) expression() {
@@ -120,6 +127,18 @@ func (p *Parser) binary() {
 		p.emitByte(bytecode.OpMultiply)
 	case TokenSlash:
 		p.emitByte(bytecode.OpDivide)
+	case TokenEqualEqual:
+		p.emitByte(bytecode.OpEqual)
+	case TokenBangEqual:
+		p.emitBytes(bytecode.OpEqual, bytecode.OpNot)
+	case TokenGreater:
+		p.emitByte(bytecode.OpGreater)
+	case TokenGreaterEqual:
+		p.emitBytes(bytecode.OpGreater, bytecode.OpNot)
+	case TokenLess:
+		p.emitByte(bytecode.OpLess)
+	case TokenLessEqual:
+		p.emitBytes(bytecode.OpLess, bytecode.OpNot)
 	default:
 		panic("unreachable case in binary")
 	}

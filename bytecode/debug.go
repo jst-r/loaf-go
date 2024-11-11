@@ -69,6 +69,12 @@ func (d *disassembler) DisassembleInstruction() {
 		d.simpleInstruction("OP_TRUE")
 	case OpFalse:
 		d.simpleInstruction("OP_FALSE")
+	case OpEqual:
+		d.simpleInstruction("OP_EQUAL")
+	case OpGreater:
+		d.simpleInstruction("OP_GREATER")
+	case OpLess:
+		d.simpleInstruction("OP_LESS")
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
