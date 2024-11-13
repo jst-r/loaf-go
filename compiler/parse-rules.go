@@ -89,7 +89,13 @@ func (p *Parser) variable() {
 
 func (p *Parser) namedVariable(name *Token) {
 	arg := p.identifierConstant(name)
-	p.emitBytes(bytecode.OpGetGlobal, arg)
+
+	if p.match(TokenEqual) {
+		p.expression()
+		p.emitBytes(bytecode.OpSetGlobal, arg)
+	} else {
+		p.emitBytes(bytecode.OpGetGlobal, arg)
+	}
 }
 
 func (p *Parser) number() {

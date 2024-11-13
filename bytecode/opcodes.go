@@ -16,7 +16,7 @@ const (
 	OpLess
 	OpPrint
 	OpPop
-	OpDefineGlobal
+	OpSetGlobal
 	OpGetGlobal
 	OpReturn
 )
