@@ -17,5 +17,6 @@ const (
 	OpPrint
 	OpPop
 	OpDefineGlobal
+	OpGetGlobal
 	OpReturn
 )

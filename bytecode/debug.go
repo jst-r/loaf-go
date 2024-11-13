@@ -53,6 +53,8 @@ func (d *disassembler) DisassembleInstruction() {
 		d.constantInstruction("OP_CONSTANT")
 	case OpDefineGlobal:
 		d.constantInstruction("OP_DEFINE_GLOBAL")
+	case OpGetGlobal:
+		d.constantInstruction("OP_GET_GLOBAL")
 	case OpNot:
 		d.simpleInstruction("OP_NOT")
 	case OpNegate:

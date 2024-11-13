@@ -54,6 +54,8 @@ func (p *Parser) initRules() {
 	p.rules[TokenLessEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
 	p.rules[TokenGreater] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
 	p.rules[TokenGreaterEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
+
+	p.rules[TokenIdentifier] = ParseRule{prefix: p.variable, precedence: PrecedenceNone}
 }
 
 func (p *Parser) getRule(tokenType TokenType) *ParseRule {
@@ -79,6 +81,15 @@ func (p *Parser) parsePrecedence(precedence Precedence) {
 		}
 		rule.infix()
 	}
+}
+
+func (p *Parser) variable() {
+	p.namedVariable(&p.previous)
+}
+
+func (p *Parser) namedVariable(name *Token) {
+	arg := p.identifierConstant(name)
+	p.emitBytes(bytecode.OpGetGlobal, arg)
 }
 
 func (p *Parser) number() {

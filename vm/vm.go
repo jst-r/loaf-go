@@ -94,9 +94,16 @@ func (v *VM) run() {
 		case bytecode.OpPop:
 			v.pop()
 		case bytecode.OpDefineGlobal:
-			name := v.pop().AsString().Str
+			name := v.readString()
 			v.globals[name] = v.peek(0)
 			v.pop()
+		case bytecode.OpGetGlobal:
+			name := v.readString()
+			value, ok := v.globals[name]
+			if !ok {
+				panic("Undefined variable: " + name)
+			}
+			v.push(value)
 		case bytecode.OpPrint:
 			fmt.Println(v.pop().FormatString())
 		}
@@ -119,6 +126,10 @@ func (v *VM) readByte() uint8 {
 func (v *VM) readConstant() Value {
 	index := int(v.readByte())
 	return v.Chunk.Constants[index]
+}
+
+func (v *VM) readString() string {
+	return v.readConstant().AsString().Str
 }
 
 func (v *VM) push(value Value) {
