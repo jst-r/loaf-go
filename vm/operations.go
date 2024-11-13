@@ -26,7 +26,7 @@ func (v *VM) add() {
 	} else if v.peek(0).IsString() || v.peek(1).IsString() {
 		b := v.pop()
 		a := v.pop()
-		v.push(value.String(a.AsString().Str + b.AsString().Str))
+		v.push(v.objects.NewString(a.AsString().Str + b.AsString().Str))
 	} else {
 		panic("Type error: operands must be numbers or strings")
 	}

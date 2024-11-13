@@ -27,7 +27,7 @@ type Parser struct {
 
 func NewParser(input string) *Parser {
 	p := &Parser{
-		compilingChunk: &bytecode.Chunk{},
+		compilingChunk: bytecode.NewChunk(),
 		scanner:        NewScanner(input),
 		current:        Token{}, previous: Token{},
 		errors: nil, panicMode: false}

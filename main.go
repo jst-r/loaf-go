@@ -15,6 +15,7 @@ func main() {
 		fmt.Println("Compile errors:", errs)
 		return
 	}
+	fmt.Println(prog.Objects)
 	fmt.Println(prog.Disassemble("main"))
 	res := vm.Interpret(prog)
 	fmt.Println("Interpret result:", res)

@@ -19,10 +19,11 @@ type VM struct {
 	stack    [StackSize]Value
 	stackTop int
 	err      error
+	objects  *value.ObjPool
 }
 
 func New() *VM {
-	return &VM{Chunk: nil, ip: 0, stackTop: 0}
+	return &VM{Chunk: nil, ip: 0, stackTop: 0, objects: value.NewObjPool()}
 }
 
 type InterpretResult int
@@ -35,6 +36,7 @@ const (
 
 func (v *VM) Interpret(chunk *bytecode.Chunk) InterpretResult {
 	v.Chunk = chunk
+	v.objects.Append(chunk.Objects)
 
 	v.run()
 

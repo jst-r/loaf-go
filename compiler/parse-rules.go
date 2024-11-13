@@ -97,7 +97,7 @@ func (p *Parser) number() {
 func (p *Parser) string() {
 	// Without the clone this will point to the source file, which is a hassle to deal with
 	v := strings.Clone(p.previous.Lexeme[1 : len(p.previous.Lexeme)-1])
-	p.emitConstant(value.String(v))
+	p.emitConstant(p.compilingChunk.Objects.NewString(v))
 }
 
 func (p *Parser) grouping() {

@@ -1,11 +1,11 @@
 package value
 
-type Obj struct {
+type objMetadata struct {
 	t ObjType
 }
 
 type ObjString struct {
-	Obj
+	objMetadata
 	Str string
 }
 
@@ -15,20 +15,12 @@ const (
 	ObjTypeString ObjType = iota
 )
 
-func object[T any](val *T) Value {
-	return Value{ValueTypeObject, unsafeBitCast[*T, uint64](val)}
-}
-
-func String(val string) Value {
-	return object(&ObjString{Obj{ObjTypeString}, val})
-}
-
 func (v Value) IsObject() bool {
 	return v.t == ValueTypeObject
 }
 
 func (v Value) IsObjectType(t ObjType) bool {
-	return v.IsObject() && v.AsObject().t == t
+	return v.IsObject() && v.ObjectType() == t
 }
 
 func (v Value) IsString() bool {
@@ -41,8 +33,8 @@ func (v Value) ObjectType() ObjType {
 }
 
 // Unsafe, caller must verify the type before calling this method
-func (v Value) AsObject() *Obj {
-	return unsafeBitCast[uint64, *Obj](v.mem)
+func (v Value) AsObject() *objMetadata {
+	return unsafeBitCast[uint64, *objMetadata](v.mem)
 }
 
 // Unsafe, caller must verify the type before calling this method

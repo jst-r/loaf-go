@@ -11,6 +11,11 @@ type Chunk struct {
 	Code      []uint8
 	Lines     LineInfo
 	Constants value.ValueArray
+	Objects   *value.ObjPool
+}
+
+func NewChunk() *Chunk {
+	return &Chunk{Objects: value.NewObjPool()}
 }
 
 func (c *Chunk) Write(code uint8, line int) error {
