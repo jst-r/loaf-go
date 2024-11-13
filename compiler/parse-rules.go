@@ -64,7 +64,7 @@ func (p *Parser) statement() {
 	if p.match(TokenPrint) {
 		p.printStatement()
 	} else {
-		panic("expected statement")
+		p.expressionStatement()
 	}
 }
 
@@ -72,6 +72,12 @@ func (p *Parser) printStatement() {
 	p.expression()
 	p.consume(TokenSemicolon, "Expected ; after print statement")
 	p.emitByte(bytecode.OpPrint)
+	p.emitByte(bytecode.OpPop)
+}
+
+func (p *Parser) expressionStatement() {
+	p.expression()
+	p.consume(TokenSemicolon, "Expected ; after expression")
 }
 
 func (p *Parser) expression() {

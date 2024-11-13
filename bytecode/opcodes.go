@@ -15,5 +15,6 @@ const (
 	OpGreater
 	OpLess
 	OpPrint
+	OpPop
 	OpReturn
 )

@@ -90,6 +90,8 @@ func (v *VM) run() {
 			v.binaryOp(greater)
 		case bytecode.OpLess:
 			v.binaryOp(less)
+		case bytecode.OpPop:
+			v.pop()
 		case bytecode.OpPrint:
 			fmt.Println(v.pop().FormatString())
 		}
