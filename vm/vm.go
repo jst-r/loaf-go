@@ -20,10 +20,11 @@ type VM struct {
 	stackTop int
 	err      error
 	objects  *value.ObjPool
+	globals  map[string]Value
 }
 
 func New() *VM {
-	return &VM{Chunk: nil, ip: 0, stackTop: 0, objects: value.NewObjPool()}
+	return &VM{Chunk: nil, ip: 0, stackTop: 0, objects: value.NewObjPool(), globals: make(map[string]Value)}
 }
 
 type InterpretResult int
@@ -91,6 +92,10 @@ func (v *VM) run() {
 		case bytecode.OpLess:
 			v.binaryOp(less)
 		case bytecode.OpPop:
+			v.pop()
+		case bytecode.OpDefineGlobal:
+			name := v.pop().AsString().Str
+			v.globals[name] = v.peek(0)
 			v.pop()
 		case bytecode.OpPrint:
 			fmt.Println(v.pop().FormatString())

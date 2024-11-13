@@ -7,10 +7,15 @@ import (
 	"github.com/jst-r/loaf-go/vm"
 )
 
+var source = //
+`var x = 1;
+print x;
+`
+
 func main() {
 	vm := vm.New()
 
-	prog, errs := compiler.Compile("print \"hello\" + \" strings!\";print 1 + 2 == 3;")
+	prog, errs := compiler.Compile(source)
 	if len(errs) > 0 {
 		fmt.Println("Compile errors:", errs)
 		return

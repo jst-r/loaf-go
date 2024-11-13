@@ -56,38 +56,6 @@ func (p *Parser) initRules() {
 	p.rules[TokenGreaterEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
 }
 
-func (p *Parser) declaration() {
-	p.statement()
-
-	if p.panicMode {
-		p.syncronize()
-	}
-}
-
-func (p *Parser) statement() {
-	if p.match(TokenPrint) {
-		p.printStatement()
-	} else {
-		p.expressionStatement()
-	}
-}
-
-func (p *Parser) printStatement() {
-	p.expression()
-	p.consume(TokenSemicolon, "Expected ; after print statement")
-	p.emitByte(bytecode.OpPrint)
-}
-
-func (p *Parser) expressionStatement() {
-	p.expression()
-	p.consume(TokenSemicolon, "Expected ; after expression")
-	p.emitByte(bytecode.OpPop)
-}
-
-func (p *Parser) expression() {
-	p.parsePrecedence(PrecedenceAssignment)
-}
-
 func (p *Parser) getRule(tokenType TokenType) *ParseRule {
 	return &p.rules[tokenType]
 }

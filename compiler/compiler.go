@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jst-r/loaf-go/bytecode"
 )
@@ -37,6 +38,69 @@ func NewParser(input string) *Parser {
 	p.initRules()
 
 	return p
+}
+
+func (p *Parser) declaration() {
+	if p.match(TokenVar) {
+		p.varDeclaration()
+	} else {
+		p.statement()
+	}
+
+	if p.panicMode {
+		p.syncronize()
+	}
+}
+
+func (p *Parser) varDeclaration() {
+	global := p.parseVariable("Expected variable name")
+
+	if p.match(TokenEqual) {
+		p.expression()
+	} else {
+		p.emitByte(bytecode.OpNil) // var x; => var x = nil
+	}
+
+	p.consume(TokenSemicolon, "Expected ; after variable declaration")
+	p.defineVariable(global)
+}
+
+func (p *Parser) defineVariable(global uint8) {
+	p.emitBytes(bytecode.OpDefineGlobal, global)
+}
+
+func (p *Parser) statement() {
+	if p.match(TokenPrint) {
+		p.printStatement()
+	} else {
+		p.expressionStatement()
+	}
+}
+
+func (p *Parser) printStatement() {
+	p.expression()
+	p.consume(TokenSemicolon, "Expected ; after print statement")
+	p.emitByte(bytecode.OpPrint)
+}
+
+func (p *Parser) expressionStatement() {
+	p.expression()
+	p.consume(TokenSemicolon, "Expected ; after expression")
+	p.emitByte(bytecode.OpPop)
+}
+
+func (p *Parser) expression() {
+	p.parsePrecedence(PrecedenceAssignment)
+}
+
+func (p *Parser) parseVariable(errorMessage string) uint8 {
+	p.consume(TokenIdentifier, errorMessage)
+	return p.identifierConstant(&p.previous)
+}
+
+func (p *Parser) identifierConstant(token *Token) uint8 {
+	index := p.currentChunk().AddConstant(p.compilingChunk.Objects.NewString(strings.Clone(token.Lexeme)))
+	return uint8(index)
 }
 
 func (p *Parser) endCompiler() {
