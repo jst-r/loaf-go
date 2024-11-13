@@ -58,6 +58,10 @@ func (p *Parser) initRules() {
 
 func (p *Parser) declaration() {
 	p.statement()
+
+	if p.panicMode {
+		p.syncronize()
+	}
 }
 
 func (p *Parser) statement() {

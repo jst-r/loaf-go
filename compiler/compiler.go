@@ -109,3 +109,17 @@ func (p *Parser) errorAt(token Token, msg string) {
 func (p *Parser) hadError() bool {
 	return len(p.errors) > 0
 }
+
+func (p *Parser) syncronize() {
+	p.panicMode = false
+	for p.current.Type != TokenEof {
+		if p.previous.Type == TokenSemicolon {
+			return
+		}
+		switch p.current.Type {
+		case TokenClass, TokenFun, TokenVar, TokenFor, TokenIf, TokenWhile, TokenPrint, TokenReturn:
+			return
+		}
+		p.advance()
+	}
+}
