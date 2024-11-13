@@ -24,11 +24,11 @@ const (
 	PrecedencePrimary
 )
 
-type ParseFun func()
+type ParseFunc func(canAssign bool)
 
 type ParseRule struct {
-	prefix     ParseFun
-	infix      ParseFun
+	prefix     ParseFunc
+	infix      ParseFunc
 	precedence Precedence
 }
 
@@ -70,7 +70,8 @@ func (p *Parser) parsePrecedence(precedence Precedence) {
 		return
 	}
 
-	rule.prefix()
+	canAssign := precedence <= PrecedenceAssignment
+	rule.prefix(canAssign)
 
 	for precedence <= p.getRule(p.current.Type).precedence {
 		p.advance()
@@ -79,18 +80,22 @@ func (p *Parser) parsePrecedence(precedence Precedence) {
 			p.error("Expected infix operation")
 			return
 		}
-		rule.infix()
+		rule.infix(canAssign)
+	}
+
+	if canAssign && p.match(TokenEqual) {
+		p.error("Invalid assignment target")
 	}
 }
 
-func (p *Parser) variable() {
-	p.namedVariable(&p.previous)
+func (p *Parser) variable(canAssign bool) {
+	p.namedVariable(&p.previous, canAssign)
 }
 
-func (p *Parser) namedVariable(name *Token) {
+func (p *Parser) namedVariable(name *Token, canAssign bool) {
 	arg := p.identifierConstant(name)
 
-	if p.match(TokenEqual) {
+	if canAssign && p.match(TokenEqual) {
 		p.expression()
 		p.emitBytes(bytecode.OpSetGlobal, arg)
 	} else {
@@ -98,7 +103,7 @@ func (p *Parser) namedVariable(name *Token) {
 	}
 }
 
-func (p *Parser) number() {
+func (p *Parser) number(_ bool) {
 	v, err := strconv.ParseFloat(p.previous.Lexeme, 64)
 	if err != nil {
 		p.error(err.Error())
@@ -107,18 +112,18 @@ func (p *Parser) number() {
 	p.emitConstant(value.Float(v))
 }
 
-func (p *Parser) string() {
+func (p *Parser) string(_ bool) {
 	// Without the clone this will point to the source file, which is a hassle to deal with
 	v := strings.Clone(p.previous.Lexeme[1 : len(p.previous.Lexeme)-1])
 	p.emitConstant(p.compilingChunk.Objects.NewString(v))
 }
 
-func (p *Parser) grouping() {
+func (p *Parser) grouping(_ bool) {
 	p.expression()
 	p.consume(TokenRightParen, "Expected ) after expression")
 }
 
-func (p *Parser) unary() {
+func (p *Parser) unary(_ bool) {
 	operatorType := p.previous.Type
 
 	p.parsePrecedence(PrecedenceUnary) // compile operand first because of how the stack works
@@ -133,7 +138,7 @@ func (p *Parser) unary() {
 	}
 }
 
-func (p *Parser) binary() {
+func (p *Parser) binary(_ bool) {
 	operatorType := p.previous.Type
 
 	rule := p.getRule(operatorType)
@@ -166,7 +171,7 @@ func (p *Parser) binary() {
 
 }
 
-func (p *Parser) literal() {
+func (p *Parser) literal(_ bool) {
 	switch p.previous.Type {
 	case TokenNil:
 		p.emitByte(bytecode.OpNil)
