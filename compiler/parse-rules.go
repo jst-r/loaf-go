@@ -92,7 +92,7 @@ func (p *Parser) namedVariable(name *Token) {
 
 	if p.match(TokenEqual) {
 		p.expression()
-		p.emitBytes(bytecode.OpSetGlobal, arg)
+		p.emitBytes(bytecode.OpDefineGlobal, arg)
 	} else {
 		p.emitBytes(bytecode.OpGetGlobal, arg)
 	}

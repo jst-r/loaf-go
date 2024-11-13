@@ -93,7 +93,7 @@ func (v *VM) run() {
 			v.binaryOp(less)
 		case bytecode.OpPop:
 			v.pop()
-		case bytecode.OpSetGlobal:
+		case bytecode.OpDefineGlobal:
 			name := v.readString()
 			v.globals[name] = v.peek(0)
 			v.pop()

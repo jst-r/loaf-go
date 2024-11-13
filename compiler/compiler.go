@@ -66,7 +66,7 @@ func (p *Parser) varDeclaration() {
 }
 
 func (p *Parser) defineVariable(global uint8) {
-	p.emitBytes(bytecode.OpSetGlobal, global)
+	p.emitBytes(bytecode.OpDefineGlobal, global)
 }
 
 func (p *Parser) statement() {
