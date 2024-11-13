@@ -54,7 +54,6 @@ func (v Value) FormatString() string {
 	case ValueTypeFloat:
 		return fmt.Sprintf("%f", v.AsFloat())
 	case ValueTypeObject:
-		fmt.Println(unsafeBitCast[uint64, *objMetadata](v.mem))
 		switch v.ObjectType() {
 		case ObjTypeString:
 			return fmt.Sprintf("\"%s\"", v.AsString().Str)
