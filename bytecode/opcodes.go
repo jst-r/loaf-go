@@ -14,5 +14,6 @@ const (
 	OpEqual
 	OpGreater
 	OpLess
+	OpPrint
 	OpReturn
 )

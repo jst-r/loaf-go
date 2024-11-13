@@ -9,8 +9,10 @@ import (
 func Compile(source string) (chunk *bytecode.Chunk, errors []string) {
 	parser := NewParser(source)
 	parser.advance()
-	parser.expression()
-	parser.consume(TokenEof, "Expect end of input")
+
+	for !parser.match(TokenEof) {
+		parser.declaration()
+	}
 	parser.endCompiler()
 	return parser.compilingChunk, parser.errors
 }
@@ -63,6 +65,18 @@ func (p *Parser) consume(tokenType TokenType, message string) {
 	} else {
 		p.errorAtCurrent(message)
 	}
+}
+
+func (p *Parser) match(tokenType TokenType) bool {
+	if !p.check(tokenType) {
+		return false
+	}
+	p.advance()
+	return true
+}
+
+func (p *Parser) check(tokenType TokenType) bool {
+	return p.current.Type == tokenType
 }
 
 func (p *Parser) errorAtCurrent(msg string) {

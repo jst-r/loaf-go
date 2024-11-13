@@ -60,7 +60,6 @@ func (v *VM) run() {
 
 		switch v.readByte() {
 		case bytecode.OpReturn:
-			fmt.Println(v.pop().FormatString())
 			return
 		case bytecode.OpConstant:
 			constant := v.readConstant()
@@ -91,6 +90,8 @@ func (v *VM) run() {
 			v.binaryOp(greater)
 		case bytecode.OpLess:
 			v.binaryOp(less)
+		case bytecode.OpPrint:
+			fmt.Println(v.pop().FormatString())
 		}
 	}
 }
