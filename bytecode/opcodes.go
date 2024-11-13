@@ -18,5 +18,6 @@ const (
 	OpPop
 	OpDefineGlobal
 	OpGetGlobal
+	OpSetGlobal
 	OpReturn
 )

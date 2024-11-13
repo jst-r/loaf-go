@@ -104,6 +104,14 @@ func (v *VM) run() {
 				panic("Undefined variable: " + name)
 			}
 			v.push(value)
+		case bytecode.OpSetGlobal:
+			name := v.readString()
+			_, ok := v.globals[name]
+			if !ok {
+				panic("Undefined variable: " + name)
+			}
+			v.globals[name] = v.peek(0)
+			v.pop()
 		case bytecode.OpPrint:
 			fmt.Println(v.pop().FormatString())
 		}
