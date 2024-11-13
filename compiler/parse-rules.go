@@ -76,12 +76,12 @@ func (p *Parser) printStatement() {
 	p.expression()
 	p.consume(TokenSemicolon, "Expected ; after print statement")
 	p.emitByte(bytecode.OpPrint)
-	p.emitByte(bytecode.OpPop)
 }
 
 func (p *Parser) expressionStatement() {
 	p.expression()
 	p.consume(TokenSemicolon, "Expected ; after expression")
+	p.emitByte(bytecode.OpPop)
 }
 
 func (p *Parser) expression() {
