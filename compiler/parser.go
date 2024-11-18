@@ -26,7 +26,7 @@ type Parser struct {
 	errors         []string
 	panicMode      bool
 	rules          []ParseRule
-	complier       Compliler
+	compiler       Compliler
 }
 
 func NewParser(input string) *Parser {
@@ -35,7 +35,7 @@ func NewParser(input string) *Parser {
 		scanner:        NewScanner(input),
 		current:        Token{}, previous: Token{},
 		errors: nil, panicMode: false,
-		complier: Compliler{
+		compiler: Compliler{
 			locals: make([]*Local, 0),
 		},
 	}
