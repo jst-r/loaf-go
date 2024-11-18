@@ -18,6 +18,17 @@ func Compile(source string) (chunk *bytecode.Chunk, errors []string) {
 	return parser.compilingChunk, parser.errors
 }
 
+type Compliler struct {
+	locals     []*Local
+	localCount int
+	scopeDepth int
+}
+
+type Local struct {
+	name  *Token
+	depth int
+}
+
 type Parser struct {
 	compilingChunk *bytecode.Chunk
 	scanner        *Scanner
@@ -26,6 +37,7 @@ type Parser struct {
 	errors         []string
 	panicMode      bool
 	rules          []ParseRule
+	complier       Compliler
 }
 
 func NewParser(input string) *Parser {
@@ -33,7 +45,11 @@ func NewParser(input string) *Parser {
 		compilingChunk: bytecode.NewChunk(),
 		scanner:        NewScanner(input),
 		current:        Token{}, previous: Token{},
-		errors: nil, panicMode: false}
+		errors: nil, panicMode: false,
+		complier: Compliler{
+			locals: make([]*Local, 0),
+		},
+	}
 
 	p.initRules()
 
@@ -72,9 +88,20 @@ func (p *Parser) defineVariable(global uint8) {
 func (p *Parser) statement() {
 	if p.match(TokenPrint) {
 		p.printStatement()
+	} else if p.match(TokenRightBrace) {
+		p.compiler.beginScope()
+		p.block()
+		p.compiler.endScope()
 	} else {
 		p.expressionStatement()
 	}
+}
+
+func (p *Parser) block() {
+	for !p.check(TokenRightBrace) && !p.check(TokenEof) {
+		p.statement()
+	}
+	p.consume(TokenRightBrace, "Expected } after block")
 }
 
 func (p *Parser) printStatement() {
