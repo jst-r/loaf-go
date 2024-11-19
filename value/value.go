@@ -52,7 +52,7 @@ func (v Value) FormatString() string {
 			return "false"
 		}
 	case ValueTypeFloat:
-		return fmt.Sprintf("%f", v.AsFloat())
+		return fmt.Sprintf("%v", v.AsFloat())
 	case ValueTypeObject:
 		switch v.ObjectType() {
 		case ObjTypeString:
