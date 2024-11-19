@@ -1,6 +1,8 @@
 package compiler
 
-import "errors"
+import (
+	"errors"
+)
 
 type Compliler struct {
 	locals     []*Local
@@ -9,7 +11,7 @@ type Compliler struct {
 }
 
 type Local struct {
-	name  *Token
+	name  Token
 	depth int
 }
 
@@ -36,7 +38,7 @@ func (c *Compliler) addLocal(name *Token) error {
 		return errors.New("too many local variables")
 	}
 
-	c.locals = append(c.locals, &Local{name, c.scopeDepth})
+	c.locals = append(c.locals, &Local{*name, c.scopeDepth})
 	c.localCount++
 	return nil
 }

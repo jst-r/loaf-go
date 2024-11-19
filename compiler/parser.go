@@ -83,6 +83,7 @@ func (p *Parser) declareVariable() {
 
 		if local.name.Lexeme == name.Lexeme {
 			p.errorAt(*name, "Variable with this name already declared in this scope")
+			return
 		}
 	}
 
