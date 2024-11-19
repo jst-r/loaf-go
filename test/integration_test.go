@@ -30,13 +30,23 @@ func (c Case) ExpectLines(lines ...string) Case {
 }
 
 var cases = []Case{
+	NewCase("Globals", `
+	var x = 1;
+	print x;
+	x = x + 1;
+	print x;
+	`).ExpectLines("1", "2"),
 	NewCase("Locals", `
 	{
 		var x = 1;
 		var y = 2;
+		print x;
+		print y;
+		y = 3;
+		print y;
 		print x + y;
 	}
-	`).ExpectLines("3"),
+	`).ExpectLines("1", "2", "3", "4"),
 	NewCase("Local shadowing", `
 	var x = 1;
 	{
