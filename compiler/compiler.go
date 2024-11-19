@@ -1,5 +1,7 @@
 package compiler
 
+import "errors"
+
 type Compliler struct {
 	locals     []*Local
 	localCount int
@@ -29,13 +31,14 @@ func (c *Compliler) endScope() {
 	c.localCount = len(c.locals)
 }
 
-func (c *Compliler) addLocal(name *Token) {
+func (c *Compliler) addLocal(name *Token) error {
 	if c.localCount >= 255 {
-		panic("Too many local variables")
+		return errors.New("too many local variables")
 	}
 
 	c.locals = append(c.locals, &Local{name, c.scopeDepth})
 	c.localCount++
+	return nil
 }
 
 func (c *Compliler) resolveLocal(name *Token) int {

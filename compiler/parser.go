@@ -86,7 +86,10 @@ func (p *Parser) declareVariable() {
 		}
 	}
 
-	p.compiler.addLocal(name)
+	err := p.compiler.addLocal(name)
+	if err != nil {
+		p.errorAt(*name, err.Error())
+	}
 }
 
 func (p *Parser) endCompiler() {
