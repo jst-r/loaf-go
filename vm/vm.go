@@ -3,6 +3,7 @@ package vm
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/jst-r/loaf-go/bytecode"
@@ -21,10 +22,19 @@ type VM struct {
 	err      error
 	objects  *value.ObjPool
 	globals  map[string]Value
+
+	Stdout io.StringWriter
+	Stderr io.StringWriter
 }
 
 func New() *VM {
-	return &VM{Chunk: nil, ip: 0, stackTop: 0, objects: value.NewObjPool(), globals: make(map[string]Value)}
+	return &VM{Chunk: nil,
+		ip: 0, stackTop: 0,
+		objects: value.NewObjPool(),
+		globals: make(map[string]Value),
+		Stdout:  os.Stdout,
+		Stderr:  os.Stderr,
+	}
 }
 
 type InterpretResult int
@@ -42,7 +52,7 @@ func (v *VM) Interpret(chunk *bytecode.Chunk) InterpretResult {
 	v.run()
 
 	if v.err != nil {
-		os.Stderr.WriteString(v.err.Error())
+		v.Stderr.WriteString(v.err.Error())
 		return InterpretRuntimeError
 	}
 
@@ -118,7 +128,8 @@ func (v *VM) run() {
 			index := int(v.readByte())
 			v.stack[index] = v.peek(0)
 		case bytecode.OpPrint:
-			fmt.Println(v.pop().FormatString())
+			v.Stdout.WriteString(v.pop().FormatString())
+			v.Stdout.WriteString("\n")
 		}
 	}
 }
