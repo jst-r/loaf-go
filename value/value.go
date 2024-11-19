@@ -56,7 +56,7 @@ func (v Value) FormatString() string {
 	case ValueTypeObject:
 		switch v.ObjectType() {
 		case ObjTypeString:
-			return fmt.Sprintf("\"%s\"", v.AsString().Str)
+			return v.AsString().Str
 		default:
 			panic("unreachable")
 		}
