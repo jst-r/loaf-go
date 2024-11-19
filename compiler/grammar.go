@@ -30,7 +30,7 @@ func (p *Parser) varDeclaration() {
 func (p *Parser) statement() {
 	if p.match(TokenPrint) {
 		p.printStatement()
-	} else if p.match(TokenRightBrace) {
+	} else if p.match(TokenLeftBrace) {
 		p.compiler.beginScope()
 		p.block()
 		p.compiler.endScope()
