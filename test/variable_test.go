@@ -47,7 +47,5 @@ var cases = []Case{
 }
 
 func TestVariables(t *testing.T) {
-	for _, c := range cases {
-		RunCase(c, t)
-	}
+	RunCases(cases, t)
 }

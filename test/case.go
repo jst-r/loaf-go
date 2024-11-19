@@ -35,6 +35,13 @@ func (c Case) ExpectCompileErrors(errs ...string) Case {
 	return c
 }
 
+func RunCases(cases []Case, t *testing.T) {
+	t.Helper()
+	for _, c := range cases {
+		RunCase(c, t)
+	}
+}
+
 func RunCase(c Case, t *testing.T) {
 	t.Helper()
 	t.Run(c.name, func(t *testing.T) {
