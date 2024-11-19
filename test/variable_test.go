@@ -34,6 +34,16 @@ var cases = []Case{
 	}
 	print x;
 	`).ExpectLines("3", "2", "1"),
+	NewCase("Shadow with use", `
+	{
+		var x = 1;
+		{
+			var x = x + 1;
+			print x;
+		}
+		print x;
+	}
+	`).ExpectCompileErrors("[line 5]error at x: can not read local variable in its own initializer"),
 }
 
 func TestVariables(t *testing.T) {

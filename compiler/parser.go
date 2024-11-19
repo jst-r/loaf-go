@@ -47,6 +47,7 @@ func NewParser(input string) *Parser {
 
 func (p *Parser) defineVariable(global uint8) {
 	if p.compiler.scopeDepth > 0 {
+		p.compiler.markInitialized()
 		return
 	}
 

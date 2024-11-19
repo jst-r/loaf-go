@@ -94,7 +94,11 @@ func (p *Parser) variable(canAssign bool) {
 
 func (p *Parser) namedVariable(name *Token, canAssign bool) {
 	var getOp, setOp uint8
-	arg := p.compiler.resolveLocal(name)
+	arg, err := p.compiler.resolveLocal(name)
+	if err != nil {
+		p.error(err.Error())
+		return
+	}
 	if arg != -1 {
 		getOp = bytecode.OpGetLocal
 		setOp = bytecode.OpSetLocal

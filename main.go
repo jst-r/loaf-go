@@ -12,7 +12,8 @@ var source = //
 `var x = 1;
 {
 	var x = 2;
-	print x;
+	var y = 1;
+	print x + y;
 }
 print x;
 `

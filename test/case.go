@@ -15,9 +15,10 @@ const (
 )
 
 type Case struct {
-	name   string
-	code   string
-	stdOut string
+	name          string
+	code          string
+	stdOut        string
+	compileErrors []string
 }
 
 func NewCase(name string, code string) Case {
@@ -29,11 +30,27 @@ func (c Case) ExpectLines(lines ...string) Case {
 	return c
 }
 
+func (c Case) ExpectCompileErrors(errs ...string) Case {
+	c.compileErrors = errs
+	return c
+}
+
 func RunCase(c Case, t *testing.T) {
 	t.Helper()
 	t.Run(c.name, func(t *testing.T) {
 		prog, errs := compiler.Compile(c.code)
-		if len(errs) > 0 {
+		if c.compileErrors != nil {
+			if len(errs) != len(c.compileErrors) {
+				t.Logf("Expected %d compile errors, got %d", len(c.compileErrors), len(errs))
+				t.Fail()
+			}
+			for i, err := range errs {
+				if err != c.compileErrors[i] {
+					t.Logf("Expected error %d to be %s, got %s", i, c.compileErrors[i], err)
+					t.Fail()
+				}
+			}
+		} else if len(errs) > 0 {
 			t.Log("Compile errors:")
 			for _, err := range errs {
 				t.Log(err)
