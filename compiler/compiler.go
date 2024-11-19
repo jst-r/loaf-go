@@ -37,3 +37,12 @@ func (c *Compliler) addLocal(name *Token) {
 	c.locals = append(c.locals, &Local{name, c.scopeDepth})
 	c.localCount++
 }
+
+func (c *Compliler) resolveLocal(name *Token) int {
+	for i := len(c.locals) - 1; i >= 0; i-- {
+		if c.locals[i].name.Lexeme == name.Lexeme {
+			return i
+		}
+	}
+	return -1
+}

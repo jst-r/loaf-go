@@ -10,8 +10,11 @@ import (
 
 var source = //
 `var x = 1;
-x + 2 = x + 1;
-print x + 2;
+{
+	var x = 2;
+	print x;
+}
+print x;
 `
 
 func main() {

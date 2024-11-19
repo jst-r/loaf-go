@@ -111,6 +111,12 @@ func (v *VM) run() {
 				panic("Undefined variable: " + name)
 			}
 			v.globals[name] = v.peek(0)
+		case bytecode.OpGetLocal:
+			index := int(v.readByte())
+			v.push(v.stack[index])
+		case bytecode.OpSetLocal:
+			index := int(v.readByte())
+			v.stack[index] = v.peek(0)
 		case bytecode.OpPrint:
 			fmt.Println(v.pop().FormatString())
 		}

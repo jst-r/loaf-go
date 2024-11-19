@@ -93,13 +93,22 @@ func (p *Parser) variable(canAssign bool) {
 }
 
 func (p *Parser) namedVariable(name *Token, canAssign bool) {
-	arg := p.identifierConstant(name)
+	var getOp, setOp uint8
+	arg := p.compiler.resolveLocal(name)
+	if arg != -1 {
+		getOp = bytecode.OpGetLocal
+		setOp = bytecode.OpSetLocal
+	} else {
+		arg = int(p.identifierConstant(name))
+		getOp = bytecode.OpGetGlobal
+		setOp = bytecode.OpSetGlobal
+	}
 
 	if canAssign && p.match(TokenEqual) {
 		p.expression()
-		p.emitBytes(bytecode.OpSetGlobal, arg)
+		p.emitBytes(setOp, uint8(arg))
 	} else {
-		p.emitBytes(bytecode.OpGetGlobal, arg)
+		p.emitBytes(getOp, uint8(arg))
 	}
 }
 

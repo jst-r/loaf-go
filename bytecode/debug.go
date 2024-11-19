@@ -85,6 +85,10 @@ func (d *disassembler) DisassembleInstruction() {
 		d.simpleInstruction("OP_PRINT")
 	case OpPop:
 		d.simpleInstruction("OP_POP")
+	case OpGetLocal:
+		d.byteInstruction("OP_GET_LOCAL")
+	case OpSetLocal:
+		d.byteInstruction("OP_SET_LOCAL")
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
@@ -101,5 +105,10 @@ func (d *disassembler) constantInstruction(name string) {
 	index := int(d.Code[d.offset+1])
 	value := d.Constants[index].FormatString()
 	d.builder.WriteString(fmt.Sprintf("%-16s %4d %s\n", name, index, value))
+	d.offset += 2
+}
+
+func (d *disassembler) byteInstruction(name string) {
+	d.builder.WriteString(fmt.Sprintf("%-16s %d\n", name, d.Code[d.offset+1]))
 	d.offset += 2
 }

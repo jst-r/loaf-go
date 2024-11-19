@@ -19,5 +19,7 @@ const (
 	OpDefineGlobal
 	OpGetGlobal
 	OpSetGlobal
+	OpGetLocal
+	OpSetLocal
 	OpReturn
 )
