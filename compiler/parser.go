@@ -71,6 +71,10 @@ func (p *Parser) varDeclaration() {
 }
 
 func (p *Parser) defineVariable(global uint8) {
+	if p.compiler.scopeDepth > 0 {
+		return
+	}
+
 	p.emitBytes(bytecode.OpDefineGlobal, global)
 }
 
@@ -111,12 +115,38 @@ func (p *Parser) expression() {
 
 func (p *Parser) parseVariable(errorMessage string) uint8 {
 	p.consume(TokenIdentifier, errorMessage)
+
+	p.declareVariable()
+	if p.compiler.scopeDepth > 0 {
+		return 0
+	}
+
 	return p.identifierConstant(&p.previous)
 }
 
 func (p *Parser) identifierConstant(token *Token) uint8 {
 	index := p.currentChunk().AddConstant(p.compilingChunk.Objects.NewString(strings.Clone(token.Lexeme)))
 	return uint8(index)
+}
+
+func (p *Parser) declareVariable() {
+	if p.compiler.scopeDepth == 0 {
+		return
+	}
+	name := &p.previous
+
+	for i := len(p.compiler.locals) - 1; i >= 0; i-- {
+		local := p.compiler.locals[i]
+		if local.depth != -1 && local.depth < p.compiler.scopeDepth {
+			break
+		}
+
+		if local.name.Lexeme == name.Lexeme {
+			p.errorAt(*name, "Variable with this name already declared in this scope")
+		}
+	}
+
+	p.compiler.addLocal(name)
 }
 
 func (p *Parser) endCompiler() {

@@ -17,4 +17,23 @@ func (c *Compliler) beginScope() {
 
 func (c *Compliler) endScope() {
 	c.scopeDepth--
+
+	i := len(c.locals) - 1
+	for i >= 0 {
+		if c.locals[i].depth == c.scopeDepth {
+			break
+		}
+		i--
+	}
+	c.locals = c.locals[:i+1]
+	c.localCount = len(c.locals)
+}
+
+func (c *Compliler) addLocal(name *Token) {
+	if c.localCount >= 255 {
+		panic("Too many local variables")
+	}
+
+	c.locals = append(c.locals, &Local{name, c.scopeDepth})
+	c.localCount++
 }
