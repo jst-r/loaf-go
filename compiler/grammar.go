@@ -41,7 +41,7 @@ func (p *Parser) statement() {
 
 func (p *Parser) block() {
 	for !p.check(TokenRightBrace) && !p.check(TokenEof) {
-		p.statement()
+		p.declaration()
 	}
 	p.consume(TokenRightBrace, "Expected } after block")
 }
