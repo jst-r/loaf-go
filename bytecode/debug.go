@@ -92,6 +92,8 @@ func (d *disassembler) DisassembleInstruction() {
 		d.byteInstruction("OP_SET_LOCAL")
 	case OpJumpIfFalse:
 		d.shortInstruction("OP_JUMP_IF_FALSE")
+	case OpJump:
+		d.shortInstruction("OP_JUMP")
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
