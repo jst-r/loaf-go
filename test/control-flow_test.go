@@ -17,6 +17,19 @@ func TestControlFlow(t *testing.T) {
 	} else {
 		print "x is not 1";
 	}`).ExpectLines("x is not 1"),
+
+		NewCase("Locals", `
+	var x = 1;
+	if (true) {
+		x = 2;
+	}
+	print x;
+	if (false) {
+	} else {
+		x = 3;
+	}
+	print x;
+	`).ExpectLines("2", "3"),
 	}
 	RunCases(cases, t)
 }
