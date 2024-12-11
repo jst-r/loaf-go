@@ -2,7 +2,7 @@ package test
 
 import "testing"
 
-func TestControlFlow(t *testing.T) {
+func TestIfElse(t *testing.T) {
 	var cases = []Case{
 		NewCase("If", `
 	var x = 1;
@@ -32,4 +32,20 @@ func TestControlFlow(t *testing.T) {
 	`).ExpectLines("2", "3").ExpectStackSize(0),
 	}
 	RunCases(cases, t)
+}
+
+func TestLogicalOps(t *testing.T) {
+	c := NewCase("logical ops", `
+	print true and false; // false
+	print false and true; // false
+	print true and 1;     // 1
+	print nil and true;	  // nil
+	print true or false;  // true
+	print false or true;  // true
+	print nil or true;    // true
+	print 1 or nil;       // 1
+	print false or 1;     // 1
+	`).ExpectLines("false", "false", "1", "nil", "true", "true", "true", "1", "1")
+
+	RunCase(c, t)
 }

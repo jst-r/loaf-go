@@ -56,6 +56,9 @@ func (p *Parser) initRules() {
 	p.rules[TokenGreaterEqual] = ParseRule{infix: p.binary, precedence: PrecedenceComparison}
 
 	p.rules[TokenIdentifier] = ParseRule{prefix: p.variable, precedence: PrecedenceNone}
+
+	p.rules[TokenAnd] = ParseRule{infix: p.and, precedence: PrecedenceAnd}
+	p.rules[TokenOr] = ParseRule{infix: p.or, precedence: PrecedenceOr}
 }
 
 func (p *Parser) getRule(tokenType TokenType) *ParseRule {
@@ -195,4 +198,21 @@ func (p *Parser) literal(_ bool) {
 	default:
 		panic("unreachable case in literal")
 	}
+}
+
+func (p *Parser) and(_ bool) {
+	endJump := p.emitJump(bytecode.OpJumpIfFalse) // skip second operand if first is false
+	p.emitByte(bytecode.OpPop)
+	p.parsePrecedence(PrecedenceAnd)
+	p.patchJump(endJump)
+}
+
+func (p *Parser) or(_ bool) {
+	firstJump := p.emitJump(bytecode.OpJumpIfFalse) // if first is false, eval second
+	endJump := p.emitJump(bytecode.OpJump)          // if first is true, leave it on the stack
+
+	p.patchJump(firstJump)
+	p.emitByte(bytecode.OpPop)      // pop first of the stack
+	p.parsePrecedence(PrecedenceOr) // leave second on the stack
+	p.patchJump(endJump)
 }
