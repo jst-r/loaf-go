@@ -1,16 +1,22 @@
 package compiler
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLocals(t *testing.T) {
 	c := Compliler{locals: make([]*Local, 0)}
 
 	c.beginScope()
-	c.addLocal(nil)
-	c.addLocal(nil)
+	c.addLocal(&Token{})
+	c.markInitialized()
+	c.addLocal(&Token{})
+	c.markInitialized()
 	c.beginScope()
-	c.addLocal(nil)
-	c.addLocal(nil)
+	c.addLocal(&Token{})
+	c.markInitialized()
+	c.addLocal(&Token{})
+	c.markInitialized()
 	if len(c.locals) != 4 {
 		t.Errorf("Expected 4 locals, got %d", len(c.locals))
 	}
