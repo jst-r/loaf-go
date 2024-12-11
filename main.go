@@ -10,12 +10,12 @@ import (
 
 var source = //
 `var x = 1;
-{
-	var x = 2;
-	var y = 1;
-	print x + y;
+if (x == 1) {
+	print "x is 1";
 }
-print x;
+if (x == 2) {
+	print "x is 2";
+}
 `
 
 func main() {

@@ -1,6 +1,9 @@
 package compiler
 
 import (
+	"encoding/binary"
+	"math"
+
 	"github.com/jst-r/loaf-go/bytecode"
 	"github.com/jst-r/loaf-go/value"
 )
@@ -30,4 +33,17 @@ func (p *Parser) emitBytes(bs ...uint8) {
 
 func (p *Parser) emitReturn() {
 	p.emitByte(bytecode.OpReturn)
+}
+
+func (p *Parser) emitJump(op uint8) int {
+	p.emitBytes(op, 0xff, 0xff)
+	return len(p.currentChunk().Code) - 2
+}
+
+func (p *Parser) patchJump(offset int) {
+	jump := len(p.currentChunk().Code) - offset - 2
+	if jump > int(math.MaxUint16) {
+		p.error("Too much code to jump over")
+	}
+	binary.LittleEndian.PutUint16(p.currentChunk().Code[offset:offset+2], uint16(jump))
 }

@@ -28,7 +28,9 @@ func (p *Parser) varDeclaration() {
 }
 
 func (p *Parser) statement() {
-	if p.match(TokenPrint) {
+	if p.match(TokenIf) {
+		p.ifStatement()
+	} else if p.match(TokenPrint) {
 		p.printStatement()
 	} else if p.match(TokenLeftBrace) {
 		p.compiler.beginScope()
@@ -37,6 +39,23 @@ func (p *Parser) statement() {
 	} else {
 		p.expressionStatement()
 	}
+}
+
+func (p *Parser) ifStatement() {
+	p.expression()
+	p.consume(TokenLeftBrace, "Expected { after if condition")
+
+	thenJump := p.emitJump(bytecode.OpJumpIfFalse)
+	p.block()
+
+	elseJump := p.emitJump(bytecode.OpJump)
+	p.patchJump(thenJump)
+
+	if p.match(TokenElse) {
+		p.consume(TokenLeftBrace, "Expected { after else")
+		p.block()
+	}
+	p.patchJump(elseJump)
 }
 
 func (p *Parser) block() {

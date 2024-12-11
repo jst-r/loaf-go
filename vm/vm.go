@@ -1,6 +1,7 @@
 package vm
 
 import (
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -130,6 +131,14 @@ func (v *VM) run() {
 		case bytecode.OpPrint:
 			v.Stdout.WriteString(v.pop().FormatString())
 			v.Stdout.WriteString("\n")
+		case bytecode.OpJumpIfFalse:
+			offset := int(v.readUint16())
+			if v.peek(0).IsFalsey() {
+				v.ip += offset
+			}
+		case bytecode.OpJump:
+			offset := int(v.readUint16())
+			v.ip += offset
 		}
 	}
 }
@@ -145,6 +154,11 @@ func (v *VM) readByte() uint8 {
 	b := v.Chunk.Code[v.ip]
 	v.ip += 1
 	return b
+}
+
+func (v *VM) readUint16() uint16 {
+	v.ip += 2
+	return binary.LittleEndian.Uint16(v.Chunk.Code[v.ip-2 : v.ip])
 }
 
 func (v *VM) readConstant() Value {

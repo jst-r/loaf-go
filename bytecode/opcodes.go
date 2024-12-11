@@ -21,5 +21,7 @@ const (
 	OpSetGlobal
 	OpGetLocal
 	OpSetLocal
+	OpJumpIfFalse
+	OpJump
 	OpReturn
 )

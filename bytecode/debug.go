@@ -1,6 +1,7 @@
 package bytecode
 
 import (
+	"encoding/binary"
 	"fmt"
 	"strings"
 )
@@ -89,6 +90,8 @@ func (d *disassembler) DisassembleInstruction() {
 		d.byteInstruction("OP_GET_LOCAL")
 	case OpSetLocal:
 		d.byteInstruction("OP_SET_LOCAL")
+	case OpJumpIfFalse:
+		d.shortInstruction("OP_JUMP_IF_FALSE")
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
@@ -109,6 +112,11 @@ func (d *disassembler) constantInstruction(name string) {
 }
 
 func (d *disassembler) byteInstruction(name string) {
-	d.builder.WriteString(fmt.Sprintf("%-16s %d\n", name, d.Code[d.offset+1]))
+	d.builder.WriteString(fmt.Sprintf("%-16s %4d\n", name, d.Code[d.offset+1]))
 	d.offset += 2
+}
+
+func (d *disassembler) shortInstruction(name string) {
+	d.builder.WriteString(fmt.Sprintf("%-16s %4d\n", name, binary.LittleEndian.Uint16(d.Code[d.offset+1:])))
+	d.offset += 3
 }

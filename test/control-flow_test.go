@@ -12,7 +12,7 @@ func TestControlFlow(t *testing.T) {
 
 		NewCase("If else", `
 	var x = 1;
-	if (x == 1) {
+	if (x == 2) {
 		print "x is 1";
 	} else {
 		print "x is not 1";
