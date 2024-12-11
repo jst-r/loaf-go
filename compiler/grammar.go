@@ -46,10 +46,12 @@ func (p *Parser) ifStatement() {
 	p.consume(TokenLeftBrace, "Expected { after if condition")
 
 	thenJump := p.emitJump(bytecode.OpJumpIfFalse)
+	p.emitByte(bytecode.OpPop)
 	p.block()
 
 	elseJump := p.emitJump(bytecode.OpJump)
 	p.patchJump(thenJump)
+	p.emitByte(bytecode.OpPop)
 
 	if p.match(TokenElse) {
 		p.consume(TokenLeftBrace, "Expected { after else")

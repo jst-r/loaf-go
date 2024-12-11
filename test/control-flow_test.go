@@ -8,7 +8,7 @@ func TestControlFlow(t *testing.T) {
 	var x = 1;
 	if (x == 1) {
 		print "x is 1";
-	}`).ExpectLines("x is 1"),
+	}`).ExpectLines("x is 1").ExpectStackSize(0),
 
 		NewCase("If else", `
 	var x = 1;
@@ -16,7 +16,7 @@ func TestControlFlow(t *testing.T) {
 		print "x is 1";
 	} else {
 		print "x is not 1";
-	}`).ExpectLines("x is not 1"),
+	}`).ExpectLines("x is not 1").ExpectStackSize(0),
 
 		NewCase("Locals", `
 	var x = 1;
@@ -29,7 +29,7 @@ func TestControlFlow(t *testing.T) {
 		x = 3;
 	}
 	print x;
-	`).ExpectLines("2", "3"),
+	`).ExpectLines("2", "3").ExpectStackSize(0),
 	}
 	RunCases(cases, t)
 }
