@@ -19,10 +19,11 @@ type Case struct {
 	code          string
 	stdOut        string
 	compileErrors []string
+	stackSize     int
 }
 
 func NewCase(name string, code string) Case {
-	return Case{name: name, code: code}
+	return Case{name: name, code: code, stackSize: -1}
 }
 
 func (c Case) ExpectLines(lines ...string) Case {
@@ -32,6 +33,11 @@ func (c Case) ExpectLines(lines ...string) Case {
 
 func (c Case) ExpectCompileErrors(errs ...string) Case {
 	c.compileErrors = errs
+	return c
+}
+
+func (c Case) ExpectStackSize(size int) Case {
+	c.stackSize = size
 	return c
 }
 
@@ -83,6 +89,11 @@ func RunCase(c Case, t *testing.T) {
 				t.Logf("\nExpected output:\n%sActual output:\n%s", c.stdOut, vmOut.String())
 				t.Fail()
 			}
+		}
+
+		if c.stackSize != -1 && vm.Probe().Probe().StackTop() != c.stackSize {
+			t.Logf("Stack not empty after interpretation\n%v", vm.Probe().Stack())
+			t.Fail()
 		}
 
 	})
