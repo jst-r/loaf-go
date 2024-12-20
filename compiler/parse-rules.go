@@ -114,6 +114,16 @@ func (p *Parser) namedVariable(name *Token, canAssign bool) {
 	if canAssign && p.match(TokenEqual) {
 		p.expression()
 		p.emitBytes(setOp, uint8(arg))
+	} else if canAssign && p.match(TokenPlusEqual) {
+		p.expression()
+		p.emitBytes(getOp, uint8(arg))
+		p.emitByte(bytecode.OpAdd)
+		p.emitBytes(setOp, uint8(arg))
+	} else if canAssign && p.match(TokenMinusEqual) {
+		p.expression()
+		p.emitBytes(getOp, uint8(arg))
+		p.emitByte(bytecode.OpSubtract)
+		p.emitBytes(setOp, uint8(arg))
 	} else {
 		p.emitBytes(getOp, uint8(arg))
 	}

@@ -42,8 +42,14 @@ func (s *Scanner) Scan() (token Token) {
 	case '.':
 		return s.makeToken(TokenDot)
 	case '-':
+		if s.match('=') {
+			return s.makeToken(TokenMinusEqual)
+		}
 		return s.makeToken(TokenMinus)
 	case '+':
+		if s.match('=') {
+			return s.makeToken(TokenPlusEqual)
+		}
 		return s.makeToken(TokenPlus)
 	case ';':
 		return s.makeToken(TokenSemicolon)

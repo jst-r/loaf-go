@@ -30,6 +30,8 @@ const (
 	TokenGreaterEqual
 	TokenLess
 	TokenLessEqual
+	TokenPlusEqual
+	TokenMinusEqual
 	// Literals
 	TokenIdentifier
 	TokenString
