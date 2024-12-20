@@ -176,11 +176,11 @@ func (p *Parser) binary(_ bool) {
 	case TokenGreater:
 		p.emitByte(bytecode.OpGreater)
 	case TokenGreaterEqual:
-		p.emitBytes(bytecode.OpGreater, bytecode.OpNot)
+		p.emitBytes(bytecode.OpLess, bytecode.OpNot)
 	case TokenLess:
 		p.emitByte(bytecode.OpLess)
 	case TokenLessEqual:
-		p.emitBytes(bytecode.OpLess, bytecode.OpNot)
+		p.emitBytes(bytecode.OpGreater, bytecode.OpNot)
 	default:
 		panic("unreachable case in binary")
 	}
