@@ -49,3 +49,15 @@ func TestLogicalOps(t *testing.T) {
 
 	RunCase(c, t)
 }
+
+func TestWhileLoop(t *testing.T) {
+	c := NewCase("", `
+	var i = 1;
+	while i <= 5 {
+		print i;
+		i = i + 1;
+	}
+	`).ExpectLines("1", "2", "3", "4", "5")
+
+	RunCase(c, t)
+}
