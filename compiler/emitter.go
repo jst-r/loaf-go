@@ -47,3 +47,13 @@ func (p *Parser) patchJump(offset int) {
 	}
 	binary.LittleEndian.PutUint16(p.currentChunk().Code[offset:offset+2], uint16(jump))
 }
+
+func (p *Parser) emitLoop(start int) {
+	p.emitByte(bytecode.OpLoop)
+	offset := len(p.currentChunk().Code) - start + 2
+	if offset > int(math.MaxUint16) {
+		p.error("Loop body too large")
+	}
+	p.emitByte(byte(offset & 0xff))
+	p.emitByte(byte((offset >> 8) & 0xff))
+}

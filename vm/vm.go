@@ -139,6 +139,9 @@ func (v *VM) run() {
 		case bytecode.OpJump:
 			offset := int(v.readUint16())
 			v.ip += offset
+		case bytecode.OpLoop:
+			offset := int(v.readUint16())
+			v.ip -= offset
 		}
 	}
 }

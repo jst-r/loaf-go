@@ -30,6 +30,8 @@ func (p *Parser) varDeclaration() {
 func (p *Parser) statement() {
 	if p.match(TokenIf) {
 		p.ifStatement()
+	} else if p.match(TokenWhile) {
+		p.whileStatement()
 	} else if p.match(TokenPrint) {
 		p.printStatement()
 	} else if p.match(TokenLeftBrace) {
@@ -41,13 +43,32 @@ func (p *Parser) statement() {
 	}
 }
 
+func (p *Parser) whileStatement() {
+	loopStart := len(p.currentChunk().Code)
+	p.expression() // condition
+	p.consume(TokenLeftBrace, "Expected { after while condition")
+	exitJump := p.emitJump(bytecode.OpJumpIfFalse)
+	p.emitByte(bytecode.OpPop)
+
+	p.compiler.beginScope()
+	p.block()
+	p.compiler.endScope()
+
+	p.emitLoop(loopStart)
+
+	p.patchJump(exitJump)
+	p.emitByte(bytecode.OpPop)
+}
+
 func (p *Parser) ifStatement() {
 	p.expression()
 	p.consume(TokenLeftBrace, "Expected { after if condition")
 
 	thenJump := p.emitJump(bytecode.OpJumpIfFalse)
 	p.emitByte(bytecode.OpPop)
+	p.compiler.beginScope()
 	p.block()
+	p.compiler.endScope()
 
 	elseJump := p.emitJump(bytecode.OpJump)
 	p.patchJump(thenJump)
@@ -55,7 +76,10 @@ func (p *Parser) ifStatement() {
 
 	if p.match(TokenElse) {
 		p.consume(TokenLeftBrace, "Expected { after else")
+		p.compiler.beginScope()
 		p.block()
+		p.compiler.endScope()
+
 	}
 	p.patchJump(elseJump)
 }

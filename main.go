@@ -9,12 +9,11 @@ import (
 )
 
 var source = //
-`var x = 1;
-if (x == 1) {
-	print "x is 1";
-}
-if (x == 2) {
-	print "x is 2";
+`
+var x = 0;
+while x < 10 {
+	print x;
+	x = x + 1;
 }
 `
 

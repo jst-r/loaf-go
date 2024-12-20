@@ -91,9 +91,11 @@ func (d *disassembler) DisassembleInstruction() {
 	case OpSetLocal:
 		d.byteInstruction("OP_SET_LOCAL")
 	case OpJumpIfFalse:
-		d.shortInstruction("OP_JUMP_IF_FALSE")
+		d.jumpInstruction("OP_JUMP_IF_FALSE", 1)
 	case OpJump:
-		d.shortInstruction("OP_JUMP")
+		d.jumpInstruction("OP_JUMP", 1)
+	case OpLoop:
+		d.jumpInstruction("OP_LOOP", -1)
 	default:
 		d.builder.WriteString(fmt.Sprintf("unknown instruction %d\n", d.Code[d.offset]))
 		d.offset += 1
@@ -118,7 +120,12 @@ func (d *disassembler) byteInstruction(name string) {
 	d.offset += 2
 }
 
-func (d *disassembler) shortInstruction(name string) {
-	d.builder.WriteString(fmt.Sprintf("%-16s %4d\n", name, binary.LittleEndian.Uint16(d.Code[d.offset+1:])))
+func (d *disassembler) jumpInstruction(name string, sign int) {
+	jump := binary.LittleEndian.Uint16(d.Code[d.offset+1:])
+	d.builder.WriteString(fmt.Sprintf("%-16s %4d -> %d\n",
+		name,
+		jump,
+		d.offset+3+int(jump)*sign,
+	))
 	d.offset += 3
 }
